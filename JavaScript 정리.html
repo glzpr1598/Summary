@@ -71,12 +71,71 @@
     
     // 제어 대상 찾기
     /*
-    document.getElementById("아이디"); // 아이디로 객체를 찾아서 반환
-    document.getElementsByTagName("태그명"); // NodeList(유사배열) 반환.
-    document.getElementsByClassName("클래스명");
+    document.getElementById(아이디); // 아이디로 객체를 찾아서 반환
+    document.getElementsByTagName(태그명); // NodeList(유사배열) 반환.
+    document.getElementsByClassName(클래스명);
     // CSS 선택자 문법 사용
-    document.querySelector("선택자"); // 첫 객체 하나만 반환
-    document.querySelectorAll("선택자"); // 유사배열로 반환
+    document.querySelector(선택자); // 첫 객체 하나만 반환
+    document.querySelectorAll(선택자); // 유사배열로 반환
+    */
+    
+    
+    // Element 객체
+    /*
+    // 식별자 API
+    Element.classList
+    Element.className
+    Element.id
+    Element.tagName
+    // 조회 API
+    Element.getElementsByClassName(name)
+    Element.getElementsByTagName(name)
+    Element.querySelector(선택자)
+    Element.querySelectorAll(선택자)
+    // 속성 API
+    Element.getAttribute(name)
+    Element.setAttribute(name, value)
+    Element.hasAttribute(name)
+    Element.removeAttribute(name)
+    */
+    
+    
+    // 속성과 프로퍼티
+    /*
+    // attribute 방식(속성)
+    target.setAttribute('class', 'important');
+    // property 방식(프로퍼티)
+    target.className = 'important';
+    // 속성과 프로퍼티는 속성의 이름과 값이 다른 경우도 있다.
+    // jQuery는 이를 자동으로 고쳐준다.
+    */
+    
+    
+    // Node 객체
+    /*
+    // 모든 DOM 객체는 Node 객체를 상속 받는다.
+    // 관계
+    Node.childNodes // 유사배열로 반환
+    Node.firstChild
+    Node.lastChild
+    Node.nextSibling // 다음 형제 노드
+    Node.previousSibling
+    Node.contains()
+    Node.hasChildNodes()
+    // 노드의 종류
+    Node.nodeType // 노드 종류에 대한 번호
+    Node.nodeName // 태그명
+	// 값
+    Node.nodeValue
+    Node.textContent
+	// 자식 관리
+    Node.appendChild(elem) // 마지막 자식으로 엘리먼트 추가
+    Node.removeChild(elem) // 부모 노드의 자식 중 엘리먼트 삭제
+    // 문자열
+    Node.innerHTML // 노드 안의 텍스트노드 반환, 변경
+    Node.outerHTML // 노드를 포함한 텍스트노드 반환, 변경
+    Node.innerText // 노드 안의 문자열(HTML코드 제외) 반환, 변경
+    Node.outerText // 노드를 포함한 문자열(HTML코드 제외) 반환, 변경
     */
     
     
@@ -84,10 +143,33 @@
     
     
     
+    // jQuery
+    /*
+    // 웹페이지를 쉽게 조작할 수 있게 해주는 JavaScript 라이브러리
+    // jQuery 로드
+    <script src="//code.jquery.com/jquery-3.3.1.min.js"></스크립트>
+    */
     
     
-	
-	
+    // jQuery 객체
+    /*
+    $(선택자); $(DOM객체) // jQuery 함수 -> jQuery 객체 반환(유사배열)
+    $(선택자)[i]; // DOM 객체(jQuery 객체가 아님!)
+    */
+    
+    // jQuery 노드 제어 API
+    /*
+    // 추가
+    .before(텍스트노드) // 객체 앞에 텍스트노드 삽입
+    .after(텍스트노드) // 객체 뒤에 텍스트노드 삽입
+    .prepend(텍스트노드) // 객체 안 내용 앞에 텍스트노드 삽입
+    .append(텍스트노드) // 객체 안 내용 뒤에 텍스트노드 삽입
+    // 제거
+    .remove() // 객체 제거(자식 포함)
+    .empty() // 객체 안 텍스트노드 제거
+    */
+    
+    
 	
 	
 
