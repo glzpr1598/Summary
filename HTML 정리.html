@@ -1,0 +1,126 @@
+﻿<!-- 인코딩 -->
+<meta charset="utf-8">
+
+
+
+<!-- 제목(headline) -->
+<h1>test</h1>
+
+<!-- 단락(paragragh) -->
+<p>test</p>
+
+<!-- 구분선(horizontal ruel) -->
+<hr>
+
+<!-- 줄바꿈(break) -->
+<br>
+
+<!-- 텍스트 형식 -->
+<b>굵게</b>
+<em>강조</em>
+<i>Italic</i>
+<mark>형광펜</mark>
+<small>작게</small>
+<del>취소선</del>
+<ins>밑줄</ins>
+<sub>아래첨자</sub>
+<sup>위첨자</sup>
+
+
+
+<!-- 블록-레벨(block-level) 요소 -->
+<div>세로로 쌓이는 요소</div>
+
+<!-- 인라인(inline) 요소 -->
+<span>가로로 쌓이는 요소</span>
+
+
+
+<!-- 테이블 -->
+<table>
+	<caption>제목</caption>
+	<tr> <!-- 행 -->
+		<th>셀 헤더(table header)</th>
+		<td>셀(table data)</td>
+	</tr>
+</table>
+
+<!-- 병합 -->
+<td colspan="n">n개 열 병합</th>
+<td rowspan="n">n개 행 병합</th>
+
+
+
+<!-- 이미지 -->
+<img src="소스파일 위치" alt="이미지 설명" width="가로" height="세로">
+
+<!-- 링크 -->
+<a href="링크 주소" target="열기 방식">링크 대상 요소</a>
+<!-- 열기 방식
+_self : 현재 창에서 열기
+_blank : 새 탭에서 열기
+_parent : 부모 창에서 열기
+-->
+
+
+
+<!-- 순서 없는 리스트(unordered lists) -->
+<!--스타일(글머리 기호)
+disc, circle, square, none
+-->
+<ul style="list-style-type:none">
+    <li>Item</li>
+    <li>Item</li>
+    <li>Item</li>
+</ul>
+
+<!-- 순서 있는 리스트(ordered lists) -->
+<!-- 타입
+1, A, a, I, i
+-->
+<ol type="1">
+    <li>Item 1</li>
+    <li>Item 2</li>
+    <li>Item 3</li>
+</ol>
+
+<!-- 정의 리스트(description lists) -->
+<dl>
+    <dt>정의1</dt>
+    <dd>정의에 대한 설명1</dd>
+    <dt>정의2</dt>
+    <dd>정의에 대한 설명2</dd>
+</dl>
+
+
+
+<!-- iframe -->
+<iframe src="소스 주소" scrolling="no" width="가로" height="높이"></iframe>
+
+
+
+<!-- 폼(form) -->
+<form action="submit시 연결 주소" method="get|post" target="열기 방식">
+    폼 요소
+</form>
+
+<!-- 입력 형식(input) -->
+<!-- 타입
+text, password, submit, reset, radio, checkbox, button
+HTML5 : date, email, number 등
+-->
+<input type="타입" name="submit시 이름" value="submit시 값">
+<button type="button" onclick="alert('알림창 텍스트')">버튼 텍스트</button>
+
+<!-- 선택 박스(select) -->
+<select name="cars" size="1">
+  <option value="volvo" selected>Volvo</option>
+  <option value="saab">Saab</option>
+  <option value="fiat">Fiat</option>
+  <option value="audi">Audi</option>
+</select>
+
+<!-- textarea -->
+<textarea name="message" rows="10" cols="30">
+The cat was playing in the garden.
+</textarea>

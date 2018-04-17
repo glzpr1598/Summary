@@ -1,0 +1,95 @@
+<script>
+	////////////////////// BOM //////////////////////
+    // Browser Object Model
+    
+    // window 객체 : 모든 객체가 소속된 객체(생략 가능). 창이나 프레임을 의미.
+    /*
+	window.alert(window.a);
+	alert(a);
+    */
+	
+    
+	// 커뮤니케이션
+    /*
+	// 경고창
+	alert();
+	// 확인창
+	confirm(); // 확인을 누르면 true, 취소를 누르면 false 반환
+	// 입력창
+	prompt(); // 확인을 누르면 입력한값 반환
+    */
+    
+    
+    // location 객체 : 문서의 주소와 관련된 정보
+    /*
+    // http://opentutorials.org:80/module/1?id=1#bookmark
+    location.href; // 현재 문서의 전체 URL
+    location.protocol; // 프로토콜 -> http
+    location.host; // 호스트 주소(도메인) -> opentutorials.org
+    location.port; // 포트번호 -> 80
+    location.pathname; // 경로 -> /module/1
+    location.search; // 전달인자 -> ?id=1
+    location.hash; // 해쉬(페이지 내에서 특정 위치 저장) -> #bookmark
+    // URL 변경(문서 이동)
+    location.href = "https://www.naver.com";
+    location = "https://www.naver.com";
+    // 새로고침
+    location.reload();
+    */
+    
+    
+    // navigator 객체 : 브라우저와 관련된 정보
+    /* 
+	navigator.appName; // 브라우저명(크롬, 파이어폭스 등은 Netscape라 나옴)
+    navigator.appVersion; // 브라우저, 운영체제 환경
+    navigator.userAgent; // 웹브라우저가 웹서버에 보내는 내용. appVersion과 비슷
+    navigator.platform; // 브라우저가 동작하고 있는 운영체제
+    */
+    
+    
+    // 창 제어
+    /*
+    // window.open([URL], [target], [specs]); // 특정 URL 열기
+    window.open("https://www.google.co.kr/", "_blank");
+    // target 생략 : 새 탭에서
+    // _blank : 새 창에서
+    // _self : 현재 창에서
+    // _parent : 부모 frame에서
+    // 특정 name : 그 이름으로 새 탭을 연다. 다시 열어도 그 이름으로 된 탭에서만 열림.
+    // specs 속성 : width, resizable 등
+    
+    // 팝업 차단
+    // window.open() 함수가 버튼을 클릭 하는 등 사용자에 의해 실행되지 않고, script에 바로 적혀져 자동 실행되는 경우 팝업 차단이 된다.
+    */
+    
+    
+    ////////////////////// DOM //////////////////////
+    // Document Object Model
+    
+    // document 객체 : 현재 문서 전체를 의미
+    
+    
+    // 제어 대상 찾기
+    /*
+    document.getElementById("아이디"); // 아이디로 객체를 찾아서 반환
+    document.getElementsByTagName("태그명"); // NodeList(유사배열) 반환.
+    document.getElementsByClassName("클래스명");
+    // CSS 선택자 문법 사용
+    document.querySelector("선택자"); // 첫 객체 하나만 반환
+    document.querySelectorAll("선택자"); // 유사배열로 반환
+    */
+    
+    
+    
+    
+    
+    
+    
+    
+	
+	
+	
+	
+
+	// 참고 : 생활코딩(https://opentutorials.org/course/1)
+</script>
