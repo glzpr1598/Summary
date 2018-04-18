@@ -1,0 +1,115 @@
+<script>
+    // jQuery
+    /*
+    // 웹페이지를 쉽게 조작할 수 있게 해주는 JavaScript 라이브러리
+    // 크로스 브라우징을 알아서 처리
+    // CSS 셀렉터에 기반하여 DOM 조작
+    // 속성과 프로퍼티 알아서 처리
+    // 등 많은 편리한 기능 제공
+    */
+    
+    
+    // jQuery 로드
+    /*
+    <script src="//code.jquery.com/jquery-3.3.1.min.js">
+    // 1.x 버전은 IE6 이상 지원
+    // 2.x 버전은 IE9 이상 지원
+    */
+    
+    
+    // jQuery 객체
+    /*
+    $(선택자); $(DOM객체) // jQuery 함수 -> jQuery 객체 반환(유사배열)
+    $(선택자)[i]; // DOM 객체(jQuery 객체가 아님!)
+    */
+    
+    
+    // 속성 제어 API
+    /*
+    .attr(속성, [값]) // 속성 get, set
+    .prop(프로퍼티, [값]) // 프로퍼티 get, set
+    
+    */
+    
+    
+    // 노드 제어 API
+    /*
+    // 추가
+    .before(텍스트노드) // 객체 앞에 텍스트노드 삽입
+    .after(텍스트노드) // 객체 뒤에 텍스트노드 삽입
+    .prepend(텍스트노드) // 객체 안 내용 앞에 텍스트노드 삽입
+    .append(텍스트노드) // 객체 안 내용 뒤에 텍스트노드 삽입
+    // 제거
+    .remove() // 객체 제거(자식 포함)
+    .empty() // 객체 안 텍스트노드 제거
+    */
+    
+    
+	// 이벤트 등록, 제거
+    /*
+    // on : 엘리먼트에 이벤트 등록(여러개도 가능)
+    .on(이벤트, [셀렉터], [데이터], 핸들러함수)
+    // 셀렉터 : 셀렉터로 대상 필터링
+    // 데이터 : 핸들러 함수로 전달될 데이터 설정
+    
+    // off : 이벤트 제거
+    .off([이벤트], [셀렉터], [핸들러])
+    // 이벤트 : 특정 이벤트 타입 제거
+    // 셀렉터 : 대상 필터링
+    // 핸들러 : 이벤트 타입의 특정 핸들러 제거
+    */
+    
+    
+    // 여러 이벤트 등록
+    /*
+    // 방법 1
+    $("#target").on("이벤트1 이벤트2", function(e){});
+    
+    // 방법 2 : chaining (핸들러 다르게 지정 가능)
+    $("#target").on("이벤트1", function(e){}).on("이벤트2", function(e){});
+    
+    // 방법 3 : 객체 (핸들러 다르게 지정 가능)
+    $("#target").on(
+        {
+            "이벤트1" : function(e){},
+            "이벤트2" : function(e){}
+        }
+    );
+	*/
+    
+    
+    // Ajax 통신
+    /*
+    $.ajax(옵션)
+    // url : 전송할 URL
+    // data : 서버로 데이터를 전송할 때
+    // dataType : 서버에서 받은 데이터를 어떤 형식으로 해석할 지(xml, json, script, html) 지정하지 않으면 알아서 판단
+    // success : 성공 시 콜백
+    // type : 데이터 전송 방법(get, post)
+    
+    // 예제
+    $.ajax(
+        {
+            url : './time.php',
+            success : function(data){
+                $('#time').append(data);
+            }
+        }
+    );
+    
+    // POST 방식
+    $.ajax(
+        {
+            url : './time2.php',
+            type : 'post',
+            data : $('form').serialize(), // form 정보를 name=value&... 형식으로 바꿔서 전송
+            success : function(data){
+                $('#time').text(data);
+            }
+        }
+    );
+    */
+
+    
+	// 참조 : 생활코딩(https://opentutorials.org/course/1)
+</script>
