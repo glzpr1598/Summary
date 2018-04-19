@@ -85,8 +85,8 @@
     document.getElementsByTagName(태그명); // NodeList(유사배열) 반환.
     document.getElementsByClassName(클래스명);
     // CSS 선택자 문법 사용
-    document.querySelector(선택자); // 첫 객체 하나만 반환
-    document.querySelectorAll(선택자); // 유사배열로 반환
+    document.querySelector(선택자); // 첫 객체 하나만 반환(IE8 이상)
+    document.querySelectorAll(선택자); // 유사배열로 반환(IE9 이상)
     */
     
     
@@ -128,7 +128,7 @@
     .appendChild(elem) // 마지막 자식으로 엘리먼트 추가
     .removeChild(elem) // 부모 노드의 자식 중 엘리먼트 삭제
     
-    // 문자열
+    // 텍스트
     .innerHTML // 노드 안의 텍스트노드 get, set
     .outerHTML // 노드를 포함한 텍스트노드 get, set
     .innerText // 노드 안의 문자열(HTML코드 제외) get, set
@@ -247,7 +247,7 @@
     */
     
     
-    // 이벤트 타입
+    // 이벤트 종류
     /*
     //// 마우스 ////
     
@@ -275,6 +275,15 @@
     // change : form의 컨트롤 값이 변경 되었을 때 - input(text, radio, checkbox), textarea, select 태그
     // focus : 포커스가 생겼을 때
     // blur : 포커스가 사라졌을 때
+    */
+    
+    
+    
+    ////////////////////// 타이머 //////////////////////
+    /*
+    setInterval(함수, 시간(ms)) // 시간마다 함수 실행 -> Interval 객체 반환
+    clearInterval(interval객체) // 인자 interval 중지
+    setTimeout(함수, 시간(ms)) // 시간이 지난 후 함수 실행
     */
     
     
