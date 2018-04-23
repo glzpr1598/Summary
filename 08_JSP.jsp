@@ -272,6 +272,7 @@ JDBC(Java Database Connectivity)
 	// cos 라이브러리 사용 : http://servlets.com/cos/
 	// 프로젝트 - WebContent - WEB-INF - lib 폴더에 cos.jar 저장
 	// 업로드한 파일을 저장할 폴더 생성 WebContent - fileFolder
+	// 업로드한 파일은 이클립스 프로젝트의 폴더에 저장되지 않고, 톰켓 프로젝트 폴더에 저장된다.
 	
 	/* fileForm.jsp */
 	<form action="fileFormOk.jsp" method="post" enctype="multipart/form-data">
@@ -300,6 +301,81 @@ JDBC(Java Database Connectivity)
 	}
 	
 %>
+
+
+// EL(Expression Language)
+<%
+	// 표현식 또는 액션태그를 다른 방법으로 표현
+	// 산술, 논리 연산자 사용 가능
+	
+	${ vlaue } // 표현식 < %= value % > 와 같은 의미
+	${ member.name } // <jsp:getProperty name="member" property="name"/> 과 같은 의미
+	
+	// 내장객체
+	pageScope // page 객체 참조
+	requestScope
+	sessionScope
+	applicationScope
+	
+	param // 요청 파라미터 참조
+	paramValues // 요청 파라미터 배열 참조
+	initParam // 초기화 파라미터 참조
+	cookie
+%>
+
+
+// JSTL(JSP Standard Tag Library)
+<%
+	// 1.1.2버전 다운로드 : https://tomcat.apache.org/taglibs/standard/
+	// lib에 있는 jar파일 2개를 톰켓 폴더/lib에 복사
+
+	// JSTL 로드
+	< %@ taglib uri=http://java.sun.com/jsp/jstl/core prefix="c" % >
+
+	/* 태그 종류 */ 
+	// 참조 :  http://gangzzang.tistory.com/entry/JSP-JSTLJSP-Standard-Tag-Library-%EC%BD%94%EC%96%B4-%ED%83%9C%EA%B7%B8?category=525447
+	
+	// set : JSP에서 사용할 변수 선언
+	<c:set var="변수명" value="값" [scope="영역"] />
+	<c:set var="변수명" [scope="영역"]>값</c:set>
+
+	// remove
+	<c:remove var="var명" scope="영역" />
+	
+	// if
+	<c:if test="조건" var="변수명(test결과(true, false) 저장)">
+		실행문
+	</c:if>
+	
+	// choose : Java의 Switch
+	<c:choose> <!-- switch -->
+		<c:when test="조건1">실행문1</c:when> <!-- case -->
+		<c:when test="조건2">실행문2</c:when> <!-- case -->
+		<c:otherwise>실행문</c:otherwise> <!-- default -->
+	</c:choose>
+
+	// forEach
+	<c:forEach var="변수명" items="대상아이템" begin=시작 end=끝 step=증가>
+		실행문
+	</c:forEach>	
+
+	// import
+	<c:import url="URL" var="변수명" scope="영역" charEncoding="인코딩"></c:import>
+	
+	// redirect
+	<c:redirect url="URL" context="컨텍스트경로">
+		<c:param name="이름" value="값">
+	</c:redirect>
+
+	// catch : Exception 발생 시 변수에 저장
+	<c:catch var="변수명"> . . . 익셉션이 발생할 수 있는 코드 . . . </c:catch>
+	${ 변수명 } // Exception 출력
+
+	// out : 값 출력
+	<c:out value="값" escapeXml="boolean" default="기본값" />
+%>
+
+
 
 
 
