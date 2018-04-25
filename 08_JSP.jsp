@@ -150,6 +150,12 @@ response 객체
 		<error-code>500</error-code>
 		<location>/error500.jsp</location>
 	</error-page>
+	
+	// Exception 처리
+	<error-page>
+		<exception-type>java.io.IOException</exception-type>
+		<location>/error/errorIO.jsp</location>
+	</error-page>
 %>
 
 
@@ -281,13 +287,15 @@ JDBC(Java Database Connectivity)
 	</form>
 	
 	/* fileFormOk.jsp */
-	String path = request.getRealPath("fileFolder");
+	String path = request.getSession().getServletContext().getRealPath("fileFolder");
+	//String path = request.getRealPath("fileFolder");
 
 	int size = 1024 * 1024 * 10; //10M
 	String file = "";
 	String oriFile = "";
 	
 	try{
+		// request에서 파일을 추출하여 업로드
 		MultipartRequest multi = new MultipartRequest(request, path, size, "UTF-8", new DefaultFileRenamePolicy()); // 같은 이름이 있으면 파일명 뒤에 1, 2, 3, ... 붙이는 정책
 		
 		Enumeration files = multi.getFileNames();
