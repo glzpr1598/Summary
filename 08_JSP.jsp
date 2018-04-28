@@ -330,7 +330,7 @@ JDBC(Java Database Connectivity)
 	// lib에 있는 jar파일 2개를 톰켓 폴더/lib에 복사
 
 	// JSTL 로드
-	< %@ taglib uri=http://java.sun.com/jsp/jstl/core prefix="c" % >
+	< %@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" % >
 
 	/* 태그 종류 */ 
 	// 참조 :  http://gangzzang.tistory.com/entry/JSP-JSTLJSP-Standard-Tag-Library-%EC%BD%94%EC%96%B4-%ED%83%9C%EA%B7%B8?category=525447
