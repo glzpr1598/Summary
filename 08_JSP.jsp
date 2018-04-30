@@ -384,7 +384,24 @@ JDBC(Java Database Connectivity)
 %>
 
 
+// 인코딩 설정
+<%
+	request.setCharacterEncoding("UTF-8");
+	response.setCharacterEncoding("UTF-8");
+	response.setContentType("text/html; charset=UTF-8"); // PrintWriter로 HTML 작성하기 위해
+%>
 
+
+// Servlet에서 HTML 작성
+<%
+	response.setCharacterEncoding("UTF-8");
+	response.setContentType("text/html; charset=UTF-8");
+	
+	PrintWriter out = response.getWriter();
+	out.println("");
+	
+	out.close();
+%>
 
 
 참조 : Inflearn JSP 강좌

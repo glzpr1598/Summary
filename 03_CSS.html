@@ -36,16 +36,23 @@
 	
 
 	/* 링크가 걸려 있는 상태 */
-	a:link{}
+	a:link{
+		color: black;
+		text-decoration: none;
+	}
 	
     /* 마우스를 올렸을 때(hand over) */
-    a:hover{}
+    a:hover{
+		text-decoration: underline;
+	}
     
     /* 클릭 했을 때 */
     a:active{}
 	
 	/* 링크를 방문했을 때 */
-	a:visited{}
+	a:visited{
+		color: gray;
+	}
 	
 	
 	/* 캐스케이딩 : 한 요소에 여러개의 스타일이 적용 됐을 때 우선순위
@@ -57,6 +64,7 @@
         font_weight: 600; /* 600정도가 굵은 글씨 */
         font-style: italic;
         text-align: 속성 /* left, right, center, justify(양쪽 정렬)*/
+		text-decoration : 속성 /* none, underline, overline, line-through */
         color: 색깔명;
 		
 		
