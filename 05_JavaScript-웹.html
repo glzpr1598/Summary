@@ -334,82 +334,8 @@
     xhr.send(data);
     
 	
-    // jQuery를 사용하면 더 쉽게 Ajax 통신을 할 수 있다.
+    // jQuery를 사용하면 더 쉽게 Ajax 통신을 할 수 있다.(jQuery 문서 참조)
     */
-    
-	
-	// Ajax(jQuery 이용)
-	/*
-	$ajax(setting);
-	// setting
-	// data : 서버로 데이터를 전송할 때
-	// dataType : 데이터 형식(xml, json, script, html). 지정하지 않으면 jQuery가 알아서 판단
-	// success: 성공했을 때 호출할 콜백. Function(PlainObject data, String textStatus, jqXHR jqXHR)
-	// type : get, post
-	
-	// GET 방식
-	<p>time : <span id="time"></span></p>
-	<input type="button" id="execute" value="execute" />
-	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-	<script>
-		$('#execute').click(function(){
-			$.ajax({
-				url:'./time.php',
-				success:function(data){
-					$('#time').append(data);
-				}
-			});
-		});
-	</script>
-	
-	// POST 방식
-	<p>time : <span id="time"></span></p>
-	<form>
-		<select name="timezone">
-			<option value="Asia/Seoul">asia/seoul</option>
-			<option value="America/New_York">America/New_York</option>
-		</select>
-		<select name="format">
-			<option value="Y-m-d H:i:s">Y-m-d H:i:s</option>
-			<option value="Y-m-d">Y-m-d</option>
-		</select>
-	</form>
-	<input type="button" id="execute" value="execute" />
-	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-	<script>
-		$('#execute').click(function(){
-			$.ajax({
-				url:'./time2.php',
-				type:'post',
-				data:$('form').serialize(), // form태그의 정보를 값이름=값&... 형식으로 바꿔줌
-				success:function(data){
-					$('#time').text(data);
-				}
-			});
-		});
-	</script>
-	
-	// JSON
-	<p id="timezones"></p>
-	<input type="button" id="execute" value="execute" />
-	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-	<script>
-		$('#execute').click(function(){
-			$.ajax({
-				url:'./time3.php',
-				dataType:'json',
-				success:function(data){
-					var str = '';
-					for(var name in data){
-						str += '<li>'+data[name]+'</li>';
-					}
-					$('#timezones').html('<ul>'+str+'</ul>');
-				}
-			})
-		})
-	</script>
-	
-	*/
 	
 	
 	// 참조 : 생활코딩(https://opentutorials.org/course/1)

@@ -384,7 +384,47 @@ JDBC(Java Database Connectivity)
 %>
 
 
-
+// AJAX(Asynchronous JavaScript and XML)
+<%
+	// 비동기적으로 서버와 브라우저가 데이터를 주고 받는 방식(주로 JSON 사용)
+	// 페이지의 로드 없이 내용을 변경 가능
+	
+	$.ajax(옵션)
+    // url : 전송할 URL
+    // data : 서버로 데이터를 전송할 때
+    // dataType : 서버에서 받은 데이터를 어떤 형식으로 해석할 지(xml, json, script, html) 지정하지 않으면 알아서 판단
+    // success : 성공 시 콜백. Function(PlainObject data, String textStatus, jqXHR jqXHR)
+	// error : 실패 시 콜백
+    // type : 데이터 전송 방법(get, post)
+	
+	// JavaScript
+	$("#btn").click(function() {
+		$.ajax({
+			type: "post",
+			url: "./login",
+			data: {
+				id: $("#id").val(),
+				pw: $("#pw").val()
+			},
+			dataType: "json",
+			success: function(data) {},
+			error: function(err) {}
+		});
+	});
+	
+	// Servlet
+	String id = request.getParameter("id");
+	String pw = request.getParameter("pw");
+	// 아이디, 비밀번호 일치여부 result로 반환하는 코드 작성
+	Gson gson = new Gson();
+	HashMap<String, Integer> map = new HashMap<>();
+	map.put("success", result);
+	String json = gson.toJson(map);
+	response.setContentType("text/html; charset=UTF-8");
+	response.setHeader("Access-Control-Allow-Origin", "*"); // 2번째 인자 : 허용할 도메인
+	response.getWriter().println(json);
+	
+%>
 
 
 참조 : Inflearn JSP 강좌
