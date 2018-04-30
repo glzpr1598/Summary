@@ -392,6 +392,14 @@ JDBC(Java Database Connectivity)
 %>
 
 
+// AJAX(Asynchronous JavaScript and XML)
+<%
+	// 비동기적으로 서버와 브라우저가 데이터를 주고 받는 방식(주로 JSON 사용)
+	// 페이지의 로드 없이 내용을 변경 가능
+	
+	$.ajax(옵션)
+    // url : 전송할 URL
+    // data : 서버로 데이터를 전송할 때
 // Servlet에서 HTML 작성
 <%
 	response.setCharacterEncoding("UTF-8");

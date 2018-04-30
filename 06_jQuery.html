@@ -179,6 +179,14 @@
     );
 	*/
     
+	
+	// 문서 로드 완료
+	/*
+	$(document).ready(function() {
+		// 로드 완료 후 실행할 JavaScript
+	});
+	*/
+	
     
     // Ajax 통신
     /*
@@ -186,10 +194,11 @@
     // url : 전송할 URL
     // data : 서버로 데이터를 전송할 때
     // dataType : 서버에서 받은 데이터를 어떤 형식으로 해석할 지(xml, json, script, html) 지정하지 않으면 알아서 판단
-    // success : 성공 시 콜백
+    // success : 성공 시 콜백. Function(PlainObject data, String textStatus, jqXHR jqXHR)
+	// error : 실패 시 콜백
     // type : 데이터 전송 방법(get, post)
     
-    // 예제
+    // GET 방식
     $.ajax(
         {
             url : './time.php',
@@ -210,6 +219,22 @@
             }
         }
     );
+	
+	// JSON
+	$('#execute').click(function(){
+		$.ajax({
+			url:'./time3.php',
+			dataType:'json',
+			success:function(data){ // data : json 객체
+				var str = '';
+				for(var name in data){
+					str += '<li>'+data[name]+'</li>';
+				}
+				$('#timezones').html('<ul>'+str+'</ul>');
+			}
+		});
+	});
+	
     */
 
     
