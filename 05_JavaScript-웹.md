@@ -1,4 +1,4 @@
-![Object Model](Object Model.png)
+![Object Model](https://s3.ap-northeast-2.amazonaws.com/opentutorials-user-file/module/904/2229.png)
 
 # BOM
 
@@ -105,7 +105,7 @@ specs : 새 창 모양
 
 > Document Object Model
 
-![DOM Tree](C:\Users\Kim Jundo\git\00_Summary\DOM Tree.png)
+![DOM Tree](.\DOM Tree.png)
 
 ### 제어 대상 찾기
 
