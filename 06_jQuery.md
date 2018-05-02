@@ -255,10 +255,10 @@ $(document).ready(function() {
 > 페이지의 로드 없이 내용을 변경 가능
 
 ```javascript
-$.ajax(옵션);
+$.ajax(옵션객체);
 ```
 
-옵션
+옵션객체
 
 - url : 전송할 URL
 - type : 데이터 전송 방법(get, post)
