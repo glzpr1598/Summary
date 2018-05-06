@@ -16,7 +16,7 @@
 다른 페이지 삽입
 
 ```jsp
-<% include file="페이지경로"%>
+<%@ include file="페이지경로" %>
 ```
 
 
@@ -69,6 +69,11 @@ response.sendRedirect(URL) // 지정한 URL로 이동
 	<jsp:param name="id" value="abcd"/>
 	<jsp:param name="pw" value="1234"/>
 </jsp:forward>
+
+<jsp:include page="sub.jsp">
+	<jsp:param name="id" value="abcd"/>
+	<jsp:param name="pw" value="1234"/>
+</jsp:include>
 ```
 
 
@@ -538,7 +543,6 @@ out.println("");
 
 out.close();
 ```
-
 
 ------
 
