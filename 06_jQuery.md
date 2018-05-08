@@ -12,7 +12,7 @@
 # jQuery 로드
 
 ```html
-<script src="//code.jquery.com/jquery-3.3.1.min.js">
+<script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
 ```
 
 > 1.x 버전은 IE6 이상 지원
