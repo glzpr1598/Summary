@@ -95,6 +95,18 @@ target
 
 specs : 새 창 모양
 
+##### 페이지 삽입
+
+```javascript
+$("선택자").load(url, [data,] [function(response, status, xhr)])
+```
+
+data : 서버로 보낼 데이터
+function : 콜백 함수
+response : 서버로부터 받을 데이터
+status : "success", "notmodified", "error", "timeout", or "parsererror") 
+xhr : XMLHttpRequest 객체
+
 ##### 팝업 차단
 
 > window.open() 함수가 버튼을 클릭 하는 등 사용자에 의해 실행되지 않고, script에 의해 자동 실행되는 경우 팝업 차단이 된다.

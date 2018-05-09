@@ -383,6 +383,7 @@ ${ member.name } <!-- <jsp:getProperty name="member" property="name"/> 과 같�
 - pageScope : page 객체 참조
 - requestScope
 - sessionScope
+  - ${sessionScope.loginId} : 세션에 저장된 아이디 반환
 - applicationScope
 - param : 요청 파라미터 참조
 - paramValues : 요청 파라미터 배열 참조
