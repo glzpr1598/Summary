@@ -411,6 +411,7 @@ JSP Standard Tag Library
 <!-- set : JSP에서 사용할 변수 선언 -->
 <c:set var="변수명" value="값" [scope="영역"] />
 <c:set var="변수명" [scope="영역"]>값</c:set>
+<c:set target="객체명" property="속성이름(key)" value="속성값"/>
 
 <!-- remove -->
 <c:remove var="var명" scope="영역" />
