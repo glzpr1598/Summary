@@ -156,6 +156,20 @@ SELECT 컬럼명, ...
 FROM 테이블명
 ```
 
+### 데이터 병합(MERGE)
+
+데이터가 있는 경우 UPDATE, 없는 경우 INSERT 하고 싶을 때 사용
+
+```sql
+MERGE INTO 테이블 별칭
+	USING {테이블 | 뷰 | 서브쿼리} 별칭 -- 하나만 이용할 경우 DUAL
+	ON (조건)
+	WHEN MATCHED THEN  -- ON 조건에 해당하는 데이터가 있는 경우
+	UPDATE SET 컬럼 = 데이터, ...  -- UPDATE
+	WHEN NOT MATCHED THEN -- ON 조건에 해당하는 데이터가 없는 경우
+	INSERT (컬럼, ...) VALUES (데이터, ...);  -- INSERT
+```
+
 
 
 # 데이터 조회

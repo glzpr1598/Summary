@@ -152,6 +152,24 @@ $(선택자)[i]; // DOM 객체(jQuery 객체가 아님!)
 
 
 
+# API 응용
+
+### radio 버튼 선택하기
+
+```javascript
+$("input[type='radio'][name='fruits'][value='apple']").prop("checked", true);
+```
+
+jQuery 1.6 이상부터 지원
+
+### select option 선택하기
+
+```javascript
+$("#id").val("apple").prop("selected", true);
+```
+
+
+
 # 이벤트 종류
 
 ### 마우스

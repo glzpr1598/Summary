@@ -374,7 +374,7 @@ Expression Language
 - 산술, 논리 연산자 사용 가능
 
 ```jsp
-${ vlaue } <!-- < %= value % > 와 같은 의미 -->
+${ value } <!-- < %= value % > 와 같은 의미 -->
 ${ member.name } <!-- <jsp:getProperty name="member" property="name"/> 과 같은 의미 -->
 ```
 
