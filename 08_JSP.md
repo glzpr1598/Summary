@@ -77,6 +77,7 @@ response.sendRedirect(URL) // 지정한 URL로 이동
 ```
 
 
+
 # 쿠키
 
 - 서버에서 생성하여, 클라이언트에 저장
@@ -112,6 +113,7 @@ response.addCookie(cookies[i]);
 ```
 
 
+
 # 세션
 
 - 쿠키와 달리 서버상에 객체로 존재
@@ -139,6 +141,7 @@ while(enumeration.hasMoreElements()) {
 	out.println(name + " / " + value);
 }
 ```
+
 
 
 # 에러 페이지
@@ -272,6 +275,7 @@ try {
 	}
 }
 ```
+
 
 
 # DBCP

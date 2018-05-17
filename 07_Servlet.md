@@ -4,6 +4,7 @@
 맵핑 경로 : http://localhost:8181/helloworld/HWorld
 
 
+
 # 웹브라우저로 출력
 
 ```java
@@ -23,6 +24,7 @@ WAS에서 웹어플리케이션을 구분하기 위한 path
 일반적으로,  /프로젝트명
 
 
+
 # Servlet 생명주기(life cycle)
 
 Servlet 객체 생성(최초 한번)
@@ -31,6 +33,7 @@ Init() : 최초 한번
 service(), doGet(), doPost() : 요청 시 매번
 destroy() : 마지막 한번
 [후처리 : @PreDestroy]
+
 
 
 # 한글 처리
