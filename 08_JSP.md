@@ -546,8 +546,302 @@ out.println("");
 out.close();
 ```
 
+
+
+# 페이징(Paging)
+
+게시판에서 페이지 이동 기능
+
+### Controller(Service)
+
+```java
+//...
+
+public void pagingList() throws ServletException, IOException {
+    /* 파라미터 get */
+    String paramPage = request.getParameter("page");  // 현재 페이지
+    String paramListCount = request.getParameter("listCount");  // 페이지의 리스트 개수
+    String paramPageCount = request.getParameter("pageCount");  // 화면의 페이지 개수
+
+    /* 기본값 설정(파라미터로 받지 못했을 경우) */
+    // 현재 페이지
+    int page; 
+    if (paramPage == null) {
+        page = 1;
+    } else {
+        page = Integer.parseInt(paramPage);
+    }
+    // 한 페이지에 보여줄 리스트 개수
+    int listCount;
+    if (paramListCount == null) {
+        listCount = 10;
+    } else {
+        listCount = Integer.parseInt(paramListCount);
+    }
+    // 한 화면에 보여줄 페이지 개수
+    int pageCount;
+    if (paramPageCount == null) {
+        pageCount = 10;
+    } else {
+        pageCount = Integer.parseInt(paramPageCount);
+    }
+
+    // DB에서 리스트의 총 개수 가져오기
+    DAO dao = new DAO();
+    int totalCount = dao.totalCount();
+
+    // PageInfo 생성(보여줄 글번호, 보여줄 페이지, 총 페이지수 등 계산)
+    PageInfo pageInfo = new PageInfo(page, listCount, pageCount, totalCount);
+    int startNum = pageInfo.getStartNum();  // 시작 글번호
+    int endNum = pageInfo.getEndNum();  // 마지막 글번호
+
+    // startNum ~ endNum 구간 리스트 가져옴
+    dao = new DAO();
+    ArrayList<DTO> list = dao.pagedList(startNum, endNum);
+
+    request.setAttribute("list", list);
+    request.setAttribute("pageInfo", pageInfo);
+
+    // JSP 파일로 forward
+    RequestDispatcher rd = request.getRequestDispatcher("list.jsp");
+    rd.forward(request, response);
+}
+
+//...
+```
+
+### DAO
+
+```java
+//...
+
+// 게시글 총 개수 반환
+public int totalCount() {
+    String sql = "SELECT count(*) AS cnt FROM bbs";
+    int cnt = 0;
+    try {
+        ps = conn.prepareStatement(sql);
+        rs = ps.executeQuery();
+
+        if (rs.next()) {
+            cnt = rs.getInt("cnt");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+        resClose();  // 자원 반납
+    }
+
+    return cnt;
+}
+
+// startNum ~ endNum 구간 리스트 반환
+public ArrayList<DTO> pagedList(int startNum, int endNum) {
+    ArrayList<DTO> list = new ArrayList<>();
+
+    // endNum까지만 검색하여 시간 최소화
+    String sql = "SELECT X.rnum, X.컬럼, ... " + 
+        "FROM ( " + 
+        "	SELECT ROWNUM AS rnum, A.컬럼, ... " + 
+        "	FROM ( " + 
+        "		SELECT 컬럼, ... " + 
+        "		FROM 테이블 " + 
+        "		ORDER BY 정렬할컬럼 DESC) A " + 
+        "	WHERE ROWNUM <= ?) X " + 
+        "WHERE X.rnum >= ?";
+
+    try {
+        ps = conn.prepareStatement(sql);
+        ps.setInt(1, endNum);
+        ps.setInt(2, startNum);
+        rs = ps.executeQuery();
+
+        while (rs.next()) {
+            DTO dto = new DTO();
+            dto.set변수(rs.getInt("컬럼"));
+            //...
+            list.add(dto);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+        resClose();  // 자원반납
+    }
+
+    return list;
+}
+
+//...
+```
+
+### PageInfo(DTO)
+
+```java
+public class PageInfo {
+
+	// 생성 시 입력할 값
+	private int page; // 현재 페이지(보여줄)
+	private int listCount; // 한 페이지에 보여줄 리스트 수
+	private int pageCount; // 한 화면에 보여줄 페이지 수
+	private int totalCount; // 총 게시물 수
+	// 계산할 값
+	private int startNum;  // 페이지에서 보여줄 첫번째 글번호
+	private int endNum;  // 페이지에서 보여줄 마지막 글번호
+	private int totalPage; // 총 페이지 수
+	private int startPage; // 화면에 보여줄 시작 페이지
+	private int endPage; // 화면에 보여줄 마지막 페이지
+	private int nextPage;  // 다음 눌렀을 때 이동할 페이지
+	private int prevPage;  // 이전 눌렀을 때 이동할 페이지
+		
+	// 생성자
+	public PageInfo(int page, int listCount, int pageCount, int totalCount) {
+		this.page = page;
+		this.listCount = listCount;
+		this.pageCount = pageCount;
+		this.totalCount = totalCount;
+		
+		// 총 페이지수(나누어 떨어질 때 마지막 페이지가 빈페이지로 표시되는 것 방지)
+		totalPage = totalCount / listCount;
+		if (totalCount % listCount > 0) {
+			totalPage++;
+		}
+
+		// 총 페이지수보다 큰 페이지를 입력한 경우 처리
+		if (totalPage < page) {
+			page = totalPage;
+		}
+
+		// 화면에 보여줄 시작 페이지
+		startPage = ((page - 1) / pageCount) * pageCount + 1;
+		// 화면에 보여줄 마지막 페이지
+		endPage = startPage + pageCount - 1;
+
+		// 마지막 화면에서의 처리
+		if (endPage > totalPage) {
+			endPage = totalPage;
+		}
+
+		// 페이지에서 보여줄 시작 글번호
+		startNum = (page - 1) * listCount + 1;
+		// 페이지에서 보여줄 마지막 글번호
+		endNum = page * listCount;
+		
+		// 다음 눌렀을 때 이동할 페이지
+		nextPage = endPage + 1;
+		// 이전 눌렀을 때 이동할 페이지
+		prevPage = startPage - 1;
+	}
+
+	// Getters
+    // ...
+}
+```
+
+### list.jsp
+
+```html
+<!-- ... -->
+<table>
+    <tr>
+        <th>글번호</th>
+        <th>제목</th>
+        <th>글쓴이</th>
+    </tr>
+    <c:forEach items="${ list }" var="item">
+        <tr>
+            <td>${ item.글번호 }</td>
+            <td>${ item.제목 }</td>
+            <!-- ... -->
+        </tr>
+    </c:forEach>
+</table>
+<jsp:include page="paging.jsp"></jsp:include>
+<!-- ... -->
+```
+
+### paging.jsp (list.jsp에 포함된 파일)
+
+```html
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <style>
+        .paging {
+            padding: 10px 0px;
+        }
+        .paging div a {
+            float: left;
+            padding: 4px;
+            margin-right: 3px;
+            width: 15px;
+            color: black;
+            font-size: 12px;
+            font-weight: bold;
+            border: thin solid lightgray;
+            text-align: center;
+            text-decoration: none;
+        }
+        /* 글자(맨앞, 이전, 다음, 맨뒤) */
+        .paging div a.text {
+            width: 30px;
+        }
+        /* 현재 페이지, 마우스 올렸을 때 */
+        .paging div a#curPage, .paging div a:hover {  
+            color: #fff;
+            border: 1px solid orange;
+            background-color: orange;
+        }
+    </style>
+</head>
+<body>
+	<div class="paging"></div>
+</body>
+<script>
+    // 맨앞
+    if (${pageInfo.startPage} > 1) {
+        $(".paging").append("<div><a class='text' href='?page=1'>맨앞</a></div>");
+    }
+
+    // 이전
+    if (${pageInfo.startPage} > 1) {
+        $(".paging").append("<div><a class='text' href='?page=" + ${pageInfo.prevPage}  + "'>이전</a></div>");
+    }
+
+    // 페이지 번호
+    for (var i = ${pageInfo.startPage}; i <= ${pageInfo.endPage}; i++) {
+        if (i == ${pageInfo.page}) {
+            $(".paging").append("<div><a id='curPage' href='?page=" + i + "'>" + i + "</a></div>");
+        } else {
+            $(".paging").append("<div><a href='?page=" + i + "'>" + i + "</a><div>");
+        }
+    }
+
+    // 다음
+    if (${pageInfo.endPage} != ${pageInfo.totalPage}) {
+        $(".paging").append("<div><a class='text' href='?page=" + ${pageInfo.nextPage}  + "'>다음</a></div>");
+    }
+
+    // 맨뒤
+    if (${pageInfo.endPage} != ${pageInfo.totalPage}) {
+        $(".paging").append("<div><a class='text' href='?page=" + ${pageInfo.totalPage} + "'>맨뒤</a></div>");
+    }
+</script>
+</html>
+```
+
+
+
 ------
 
 ##### References
 
-Inflearn JSP 강좌
+Inflearn JSP 강좌 
+
+- https://www.inflearn.com/course/%EC%8B%A4%EC%A0%84-jsp-%EA%B0%95%EC%A2%8C/
+
+페이징
+
+- https://okky.kr/article/282819
+- https://okky.kr/article/282926
