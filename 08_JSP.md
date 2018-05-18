@@ -759,7 +759,9 @@ public class PageInfo {
         </tr>
     </c:forEach>
 </table>
-<jsp:include page="paging.jsp"></jsp:include>
+<div>
+	<jsp:include page="paging.jsp"></jsp:include>    
+</div>
 <!-- ... -->
 ```
 
@@ -774,9 +776,10 @@ public class PageInfo {
     <style>
         .paging {
             padding: 10px 0px;
+            text-align: center;
         }
         .paging div a {
-            float: left;
+            display: inline-block;
             padding: 4px;
             margin-right: 3px;
             width: 15px;
@@ -805,31 +808,31 @@ public class PageInfo {
 <script>
     // 맨앞
     if (${pageInfo.startPage} > 1) {
-        $(".paging").append("<div><a class='text' href='?page=1'>맨앞</a></div>");
+        $(".paging").append("<a class='text' href='?page=1'>맨앞</a>");
     }
 
     // 이전
     if (${pageInfo.startPage} > 1) {
-        $(".paging").append("<div><a class='text' href='?page=" + ${pageInfo.prevPage}  + "'>이전</a></div>");
+        $(".paging").append("<a class='text' href='?page=" + ${pageInfo.prevPage}  + "'>이전</a>");
     }
 
     // 페이지 번호
     for (var i = ${pageInfo.startPage}; i <= ${pageInfo.endPage}; i++) {
         if (i == ${pageInfo.page}) {
-            $(".paging").append("<div><a id='curPage' href='?page=" + i + "'>" + i + "</a></div>");
+            $(".paging").append("<a id='curPage' href='?page=" + i + "'>" + i + "</a>");
         } else {
-            $(".paging").append("<div><a href='?page=" + i + "'>" + i + "</a><div>");
+            $(".paging").append("<a href='?page=" + i + "'>" + i + "</a>");
         }
     }
 
     // 다음
     if (${pageInfo.endPage} != ${pageInfo.totalPage}) {
-        $(".paging").append("<div><a class='text' href='?page=" + ${pageInfo.nextPage}  + "'>다음</a></div>");
+        $(".paging").append("<a class='text' href='?page=" + ${pageInfo.nextPage}  + "'>다음</a>");
     }
 
     // 맨뒤
     if (${pageInfo.endPage} != ${pageInfo.totalPage}) {
-        $(".paging").append("<div><a class='text' href='?page=" + ${pageInfo.totalPage} + "'>맨뒤</a></div>");
+        $(".paging").append("<a class='text' href='?page=" + ${pageInfo.totalPage} + "'>맨뒤</a>");
     }
 </script>
 </html>
