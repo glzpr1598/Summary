@@ -704,9 +704,355 @@ two('val1');  // two.length 2 arguments.length 1
 
 ## 함수의 호출
 
+#### 일반적인 방법
+
+```javascript
+function func() {}
+func();
+```
+
+#### apply(), call()
+
+```javascript
+function sum(arg1, arg2) {
+    return arg1 + arg2;
+}
+alert(sum.apply(null, [1,2]));
+```
+
+- 첫 번째 인자 : 함수가 실행될 맥락(contenxt)
+- 두 번째 인자 : 인자로 전달할 배열
+
+#### 예제
+
+```javascript
+o1 = {val1:1, val2:2, val3:3};
+o2 = {v1:10, v2:50, v3:100, v4:25};
+function sum(){
+    var _sum = 0;
+    for(name in this){
+        _sum += this[name];
+    }
+    return _sum;
+}
+alert(sum.apply(o1));  // 6
+alert(sum.apply(o2));  // 185
+```
+
+함수에서 this는 객체 자신을 의미한다. apply의 첫 번째 인자가 함수를 실행한 맥락이므로, this는 이를 의미한다.
+
+o1에 sum 함수를 값으로 추가해도 비슷한 코드가 되지만, _sum을 출력할 때 함수도 출력하게 되므로 깔끔한 코드가 되지 못한다.
 
 
 
+# 객체지향
+
+## 생성자와 new
+
+- 프로퍼티(Property) : 객체 내의 변수
+- 메소드(Method) : 객체 내의 함수
+
+```javascript
+function Person(name) {
+    this.name = name;
+    this.introduce = function() {
+        return 'My name is ' + this.name;
+    }
+}
+
+var p1 = new Person('Kim');  // 함수에 new를 붙임.
+console.log(p1.introduce());
+
+var p2 = new Person('Lee');
+console.log(p2.introduce());
+```
+
+일반적인 객체지향 언어에서 생성자는 클래스 소속이지만,
+JavaScript에서 객체를 만드는 주체는 함수이다.
+
+
+
+## 전역객체(Global object)
+
+모든 전역변수와 함수는 window 객체의 프로퍼티이다.
+
+
+
+## this
+
+this는 함수 내에서 함수 호출 맥락(context)를 의미한다.
+함수와 객체의 관계가 느슨한 자바스크립트에서 this는 이 둘을 연결시켜주는 실질적인 연결점의 역할을 한다. 
+
+- 함수 호출 시 this -> window
+- 메소드 호출 시 this -> 객체
+
+#### aplly, call
+
+함수의 메소드인 apply, call을 이용하면 this를 제어할 수 있다.
+
+```javascript
+var o = {};
+var p = {};
+function func(){
+    switch(this){
+        case o:
+            document.write('o<br />');
+            break;
+        case p:
+            document.write('p<br />');
+            break;
+        case window:
+            document.write('window<br />');
+            break;          
+    }
+}
+func();  // window
+func.apply(o);  // o (o 맥락에서 함수 실행)
+func.apply(p);  // p
+```
+
+
+
+## 상속
+
+```javascript
+function Person(name){
+    this.name = name;
+}
+Person.prototype.name=null;
+Person.prototype.introduce = function(){
+    return 'My name is '+this.name; 
+}
+ 
+function Programmer(name){
+    this.name = name;
+}
+Programmer.prototype = new Person();  // Person 상속받음
+Programmer.prototype.coding = function(){  // 새로운 메소드 추가
+    return "hello world";
+}
+ 
+var p1 = new Programmer('egoing');
+document.write(p1.introduce()+"<br />");  // My name is egoing (Person의 기능)
+document.write(p1.coding()+"<br />");  // hello world (새로운 기능)
+```
+
+
+
+## Prototype
+
+객체의 원형을 의미한다. prototype에 저장된 속성들은 생성자를 통해서 객체가 만들어질 때 그 객체에 연결된다.
+
+```javascript
+function Ultra(){}
+Ultra.prototype.ultraProp = true;
+ 
+function Super(){}
+Super.prototype = new Ultra();
+ 
+function Sub(){}
+Sub.prototype = new Super();
+ 
+var o = new Sub();
+console.log(o.ultraProp);  // true
+```
+
+1. 객체 o에서 ultraProp를 찾는다.
+2. 없다면 Sub.prototype.ultraProp를 찾는다.
+3. 없다면 Super.prototype.ultraProp를 찾는다.
+4. 없다면 Ultra.prototype.ultraProp를 찾는다.
+
+prototype은 객체와 객체를 연결하는 체인의 역할을 한다. 이러한 관계를 prototype chain이라고 한다.
+
+
+
+## 표준 내장 객체의 확장
+
+#### 표준 내장 객체(Standart Built-in Object)
+
+JavaScript가 기본적으로 가지고 있는 객체
+
+- Object
+- Function
+- Array
+- String
+- Boolean
+- Number
+- Math
+- Date
+- RegExp
+
+#### 배열 확장
+
+```javascript
+Array.prototype.rand = function(){
+	// 0~5 사이의 난수를 발생시키고, 소수점 버림(floor)
+    var index = Math.floor(this.length*Math.random());
+    return this[index];
+}
+var arr = new Array('seoul','new york','ladarkh','pusan', 'Tsukuba');
+console.log(arr.rand());
+```
+
+이렇게 하면 배열에 내장된 메소드인 것처럼 사용할 수 있다.
+
+
+
+## Object
+
+Object 객체는 가장 기본적인 형태를 가지고 있는 객체이다. 모든 객체는 Object 객체를 상속받는다.
+
+아래는 Object 객체를 확장하여 모든 객체가 접근할 수 있는 API를 만든 예시이다.
+
+```javascript
+Object.prototype.contain = function(needle) {  // needle in a haystack
+    for(var name in this){
+        if(this[name] === needle){
+            return true;
+        }
+    }
+    return false;
+}
+var o = {'name':'egoing', 'city':'seoul'}
+console.log(o.contain('egoing'));
+var a = ['egoing','leezche','grapittie'];
+console.log(a.contain('leezche'));
+```
+
+하지만 Object 객체는 모든 객체에 영향을 주기 때문에 확장하지 않는 것이 바람직하다.
+
+확장 후에 아래 코드를 실행하면,
+
+```javascript
+for (var name in o) {
+    console.log(name);
+}
+```
+
+결과
+
+```javascript
+name
+city
+contain
+```
+
+기본 프로퍼티 외에 다른 프로퍼티가 있으면 개발자에게 혼란을 준다. 이를 구분하기 위해 포러퍼티가 해당 객체의 소속인지를 체크할 수 있는 hasOwnProperty를 사용하면 된다.
+
+```javascript
+for (var name in o) {
+    if (o.hasOwnProperty(name)) {
+        console.log(name);
+    }
+}
+```
+
+결과
+
+```javascript
+name
+city
+// contain은 o의 프로퍼티가 아니라 Object의 프로퍼티이므로 출력되지 않음.
+```
+
+
+
+## 데이터 타입
+
+데이터 타입은 크게 두 가지로 구분할 수 있다. 원시 데이터 타입(primite type)과 참조 데이터 타입(referece type). 참조 데이터 타입은 객체이다.
+
+#### 원시 데이터 타입
+
+- 숫자
+- 문자열
+- boolean
+- null
+- undefined
+
+#### 래퍼 객체(Wrapper object)
+
+```javascript
+var str = 'coding';
+console.log(str.length);  // 6
+```
+
+문자열은 프로퍼티와 메소드가 있다.  하지만 객체가 아닌 원시 데이터 타입인 이유는 문자열 작업을 할 때 자바스크립트가 임시적으로 문자열 객체를 만들기 때문이다.
+
+```javascript
+var str = 'coding';
+str.prop = 'everybody';
+console.log(str.prop);  // undefined
+```
+
+str.prop을 하는 순간에는 내부적으로 String 객체가 만들어지지만, 바로 제거되기 때문에 undefined가 출력된다.
+
+원시 데이터 타입과 관련한 필요한 기능을 제공하기 위해 원시 데이터 타입을 객체처럼 다룰 수 있도록 하기 위한 객체를 래퍼 객체라고 한다.
+
+- String
+- Number
+- Boolean
+
+
+
+## 참조
+
+#### 복제
+
+```javascript
+var a = 1;
+var b = a;
+b = 2;
+console.log(a);  // 1
+```
+
+#### 참조
+
+```javascript
+var a = {'id': 1};
+var b = a;
+b.id = 2;
+console.log(a.id);  // 2
+```
+
+원시 데이터 타입은 값이 복제되지만, 참조 데이터 타입(객체)은 값을 참조한다.
+
+#### 함수
+
+원시 데이터 타입을 인자로 넘겼을 때
+
+```javascript
+var a = 1;
+function func(b) {
+    b = 2;
+}
+func(a);
+console.log(a);  // 1
+```
+
+참조 데이터 타입을 인자로 넘겼을 때
+
+```javascript
+var a = {'id': 1};
+function func(b) {
+    b = {'id': 2};
+}
+func(a);
+console.log(a.id);  // 1
+// b를 새로운 객체로 대체하였기 때문에 1이 출력된다.
+```
+
+```javascript
+var a = {'id': 1};
+function func(b) {
+    b.id = 2;
+}
+func(a);
+console.log(a.id);  // 2
+```
+
+
+
+------
 
 ##### References
 
