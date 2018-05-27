@@ -18,11 +18,11 @@ https://spring.io/tools/sts 에서 STS 다운로드
 
 
 
-## DI(Dependency Injection)와 IOC 컨테이너
+## DI(Dependency Injection)와 IoC 컨테이너
 
 ![](img\spring01.PNG)
 
-Spring은 객체를 직접 생성하여 쓰는 것이 아니라, IOC 컨테이너에서 객체(부품)를 가져다 쓰는 방법(조립)을 사용한다.
+Spring은 객체를 직접 생성하여 쓰는 것이 아니라, IoC(Inversion of Control) 컨테이너에서 객체(부품)를 가져다 쓰는 방법(조립)을 사용한다.
 
 
 
@@ -41,7 +41,7 @@ Java 파일의 수정 없이 스프링 설정 파일만을 수정하여 부품�
 Spring Bean Configuration File(스프링 설정 파일)
 객체를 가져오기 위한 외부파일(객체 생성)
 
-- 방법 1. Setter(property) 이용
+##### 방법 1. Setter(property) 이용
 
 ```xml
 <bean id="bmiCalculator" class="com.javalec.ex.MyInfo">
@@ -80,7 +80,7 @@ Spring Bean Configuration File(스프링 설정 파일)
 </bean>
 ```
 
-- 방법 2. 생성자 이용
+##### 방법 2. 생성자 이용
 
 property 대신에 constructor-arg 를 쓰면 된다.
 
@@ -178,3 +178,404 @@ public class ApplicationConfig {
     // ...
 }
 ```
+
+
+# 생명주기와 범위
+
+## 스프링 IoC 컨테이너 생명주기
+
+1. 생성
+
+```java
+GenericXmlApplicationContext ctx = new GenericXmlApplicationContext();
+```
+
+2. 설정
+
+```java
+ctx.load("classpath:applicationCTX.xml");
+ctx.refresh();
+```
+
+3. 사용
+
+```java
+Student student = ctx.getBean("student", Student.class);
+// 사용 코드...
+```
+
+4. 종료
+
+```java
+ctx.close();
+```
+
+
+
+## 스프링 빈 생명주기
+
+#### 방법 1. implements를 이용
+
+```java
+public class Student implements InitializingBean, DisposalbleBean {
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        // 빈 초기화 과정에서 호출
+        // ctx.refesh() 호출할 때
+    }
+    
+    @Override
+    public void destroy() throws Exception {
+        // 빈 소멸 과정에서 호출
+        // ctx.close() 호출할 때
+    }
+}
+```
+
+#### 방법 2. Annotation을 이용
+
+```java
+@PostConstruct
+public void initMethod() {
+    // 빈 초기화 과정에서 호출
+}
+
+@PreDestroy
+public destroyMethod() {
+    // 빈 소멸 과정에서 호출
+}
+```
+
+
+
+## 스프링 빈 범위(scope)
+
+```xml
+<bean id="student" class="com.javalec.ex.Student" scope="singleton"/>
+```
+
+```java
+Student student1 = ctx.getBean("student", Student.class);
+Student student2 = ctx.getBean("student", Student.class);
+```
+
+- singleton : 객체를 한번만 생성하기 때문에, student1과 student2는 같은 객체를 참조한다.
+  즉, 하나의 bean 정의에 대해서 스프링 IoC 컨테이너 내에 단 하나의 객체만 존재한다.
+- prototype : getBean()을 호출할 때마다 새로운 객체를 생성한다.
+  즉, 하나의 bean 정의에 대해서 다수의 객체가 존재할 수 있다.
+- 그 외 : (Spring MVC Web Application에서) request, session, global session
+
+
+
+# 외부파일을 이용한 설정
+
+resources 폴더에 .properties 파일 미리 만들어 놓는다.
+
+## Environment 객체 이용
+
+```java
+ConfigurableApplicationContext ctx = new GenericXmlApplicationContext();
+ConfigurableEnvironment env = ctx.getEnvironment();
+
+// 추가
+MutablePropertySources propertySources = env.getPropertySources();
+propertySources.addLast(new ResourcePropertySource("classpath:admin.properties"));
+
+// 추출
+env.getProperty("admin.id");
+```
+
+
+
+## properties 파일 이용
+
+resources 폴더에 .properties 파일 미리 만들어 놓는다.
+
+#### 방법 1. XML 파일 이용
+
+```xml
+<!-- properties 파일 지정 -->
+<context:property-placeholder location="classpath:파일명.properties, ..." />
+
+<bean id="adminConnection" class="패키지.AdminConnection">
+	<property name="adminId">
+    	<value>${admin.id}</value>
+    </property>
+    <property name="adminPw">
+    	<value>${admin.pw}</value>
+    </property>
+</bean>
+```
+
+xml 파일 아래에 Namespaces 탭에서 context 항목을 체크해줘야 사용 가능
+
+#### 방법 2. Java 파일 이용
+
+```java
+@Configuration
+public class ApplicationConfig {
+    // Value annotation을 통해 properties 파일의 데이터가 자동으로 할당
+    @Value("${admin.id}")
+    private String adminId;
+    @Value("${admin.pw}")
+    private String adminPw;
+    
+    // properties 파일 가져오기
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer Properties() {
+        PropertySourcesPlaceholderConfigurer configurer = 
+            new PropertySourcesPlaceholderConfigurer();
+        
+        Resource[] locations = new Resource[2];
+        locations[0] = new ClassPathResource("admin.properties");
+        locations[1] = new ClassPathResource("sub_admin.properties");
+        configurer.setLocations(locations);
+        
+        return configurer;
+    }
+    
+    // 객체 생성
+    @Bean
+    public AdminConnection adminConfig() {
+        AdminConnection adminConnection = new AdminConnection();
+        adminConnection.setAdminId(adminId);
+        adminConnection.setAdminPw(adminPw);
+        return adminConnection;
+    }
+}
+```
+
+
+
+## profile 속성 이용
+
+환경에 따라 외부파일을 선택하고 싶을 때 사용
+
+#### 방법 1. XML 파일 이용
+
+applicationCTX_dev.xml (개발용)
+
+```xml
+<beans ... profile="dev">
+	<bean id="serverInfo" class="com.javalec.ex.ServerInfo">
+        <!-- 개발용 데이터 set -->
+    </bean>
+</beans>
+```
+
+applicationCTX_run.xml (배포용)
+
+```xml
+<beans ... profile="run">
+	<bean id="serverInfo" class="com.javalec.ex.ServerInfo">
+        <!-- 배포용 데이터 set -->
+    </bean>
+</beans>
+```
+
+MainClass.java
+
+```java
+GenericXmlApplicationContext ctx = new GenericXmlApplicationContext();
+// 원하는 외부파일을 선택
+ctx.getEnvironment().setActiveProfiles("dev");  // 개발용
+//ctx.getEnvironment().setActiveProfiles("run");  // 배포용
+ctx.load("applicationCTX_dev.xml", "applicationCTX_run.xml");
+```
+
+#### 방법 2. Java 파일 이용
+
+ApplicationConfigDev.java (개발용)
+
+```java
+@Configuration
+@Profile("dev")
+public class ApplicationConfigDev {
+    @Bean
+    public ServerInfo serverInfo() {
+        ServerInfo info = new ServerInfo();
+        // 개발용 데이터 set
+        return info;
+    }
+}
+```
+
+ApplicationConfigRun.java (배포용)
+
+```java
+@Configuration
+@Profile("run")
+public class ApplicationConfigDev {
+    @Bean
+    public ServerInfo serverInfo() {
+        ServerInfo info = new ServerInfo();
+        // 배포용 데이터 set
+        return info;
+    }
+}
+```
+
+MainClass.java
+
+```java
+AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+ctx.getEnvironment().setActiveProfiles("dev");  // 개발용
+//ctx.getEnvironment().setActiveProfiles("run");  // 배포용
+ctx.register(ApplicationConfigDev.class, ApplicationConfigRun.class);
+ctx.refresh();
+```
+
+
+
+# AOP
+
+## AOP란?
+
+Aspect Oriented Programming : 관점 지향 프로그래밍
+
+핵심 기능과 공통 기능을 분리하여, 모듈성을 증가시킨 프로그래밍 방법
+
+- aspect : 공통 기능
+- advice : 언제 공통 기능을 수행할 지
+- joinpoint : advice를 적용할 대상(method)
+- pointcut : jointpoint의 부분, 실제로 advice가 적용된 부분
+- weaving : advice를 핵심 기능에 적용하는 행위
+
+
+
+## AOP 구현
+
+#### 방법 1. XML 이용
+
+1. 의존 설정(pom.xml)
+
+```xml
+<!-- AOP -->
+<dependency>
+	<groupId>org.aspectj</groupId>
+    <artifactId>aspectjweaver</artifactId>
+    <version>1.7.4</version>
+</dependency>
+```
+
+라이브러리가 추가됨.
+
+2. 공통 기능 클래스
+
+```java
+public class LogAop {
+    public Object loggerAop(ProceedingJoinPoint joinpoint) throws Throwable {
+        // joinpoint(메소드명) 출력
+        String signatureStr = joinpoint.getSignature().toShortString();
+        /* 핵심 기능 전에 수행할 공통 기능... */
+        try {
+            Object obj = joinpoint.proceed();
+            return obj;
+        } finally {
+            /* 핵심 기능 후에 수행할 공통 기능... */
+        }
+    }
+}
+```
+
+3. XML 파일 설정
+
+```xml
+<!-- Namespaces에서 aop항목 체크 -->
+
+<bean id="logAop" class="com.javalec.ex.LogApp" />
+
+<aop:config>
+	<aop:aspect id="logger" ref="logAop">
+    	<aop:pointcut id="publicM" expression="within(com.javalec.ex.*)" />
+        <aop:around pointcut-ref="publicM" method="loggerAop" />  <!-- advice -->
+    </aop:aspect>
+</aop:config>
+```
+
+advice 종류
+
+- aop:around : 메소드 실행 전/후, exception 발생 시
+- aop:before : 메소드 실행 전
+- aop:after : 메소드 실행 후, exception 발생 시
+- aop:after-returning : 메소드가 정상적으로 실행 후
+- aop:after-throwing : 메소드 실행 중 exception 발생 시
+
+#### 방법 2. @Aspect 이용
+
+1. 의존 설정(pom.xml)
+
+```xml
+<!-- AOP -->
+<dependency>
+	<groupId>org.aspectj</groupId>
+    <artifactId>aspectjweaver</artifactId>
+    <version>1.7.4</version>
+</dependency>
+```
+
+2. Aspect 클래스
+
+```java
+@Aspect
+public class LogAop {
+    @Pointcut("within(com.javalec.ex.*)")
+    private void pointcutMethod() {}
+    
+    @Around("pointcutMethod()")
+    public Object loggerAop(ProceedingJoinPoint joinpoint) throws Throwable {
+        // joinpoint(메소드명) 출력
+        String signatureStr = joinpoint.getSignature().toShortString();
+        /* 핵심 기능 전에 수행할 공통 기능... */
+        try {
+            Object obj = joinpoint.proceed();
+            return obj;
+        } finally {
+            /* 핵심 기능 후에 수행할 공통 기능... */
+        }
+    }
+    
+    // Pointcut 없이 직접 advice 지정 가능
+    @Before("within(com.javalec.ex.*)")
+    public void beforeAdviece() {
+        /* 핵심 기능 전에 수행할 공통 기능... */
+    }
+}
+```
+
+3. XML 파일 설정
+
+```xml
+<!-- Namespaces에서 aop항목 체크 -->
+
+<aop:aspectj-autoproxy />
+<bean id="logAop" class="com.javalec.ex.LogAop" />
+```
+
+#### AspectJ Pointcut 표현식
+
+```java
+// .. : 0개 이상
+
+// execution
+@Pointcut("execution(public void get*(..))")  // public void인 모든 get 메소드(파라미터 개수 상관 없음)
+@Pointcut("execution(* com.javalec.ex.*.*())")  // com.javalec.ex 패키지에 파라미터가 없는 메소드
+@Pointcut("execution(* com.javalec.ex..*.*())")  // com.javalec.ex와 하위 패키지에 파라미터가 없는 메소드
+@Pointcut("execution(* com.javalec.ex.Worker.*())")  // com.javalec.ex.Worker 클래스의 메소드
+
+// within
+@Pointcut("within(com.javalec.ex.*)")  // com.javalec.ex 패키지 안의 메소드
+@Pointcut("within(com.javalec.ex..*)")  // com.javalec.ex와 하위 패키지 안의 메소드
+@Pointcut("within(com.javalec.ex.Worker)")  // com.javalec.ex.Worker 클래스의 메소드
+
+// bean
+@Pointcut("bean(student)")  // student 빈
+@Pointcut("bean(*ker)")  // ker로 끝나는 빈
+```
+
+
+
+
+
+
+
