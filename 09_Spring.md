@@ -575,7 +575,236 @@ public class LogAop {
 
 
 
+# MVC
+
+## 스프링 MVC 구조
+
+![](img\spring02.PNG)
+
+## 한글 처리
+
+web.xml
+
+```xml
+<filter>
+    <filter-name>encodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+        <param-name>encoding</param-name>
+        <param-value>UTF-8</param-value>
+    </init-param>
+    <init-param>
+        <param-name>forceEncoding</param-name>
+        <param-value>true</param-value>
+    </init-param>
+</filter>
+<filter-mapping>
+    <filter-name>encodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+```
 
 
 
+# Controller
 
+## 컨트롤러 클래스
+
+servlet-context.xml 파일에 명시된 패키지 안에서만 @Controller를 스캔함.
+
+```java
+@Controller
+public class HomeController {
+    // ...
+}
+```
+
+
+
+## 요청 처리 메소드
+
+```java
+@ReqeustMapping("/view")
+public String view() {
+    return "view";
+}
+```
+
+
+
+## 뷰에 데이터 전달
+
+#### 방법 1. Model 객체 이용
+
+```java
+@RequestMapping("view")
+public String view(Model model) {
+    model.addAttribute("name", "Kim");
+    return "view";
+}
+```
+
+#### 방법 2. ModelAndView 객체 이용
+
+```java
+@RequestMapping("view")
+public ModelAndView view() {
+    ModelAndView mv = new ModelAndView();
+    mv.addObject("name", "Kim");
+    mv.setViewName("view");
+    return mv;
+}
+```
+
+#### 뷰에서 수신
+
+```jsp
+${name}
+```
+
+
+
+## 클래스에 @RequestMapping 적용
+
+클래스에 @RequestMapping을 적용하면 소속 메소드에 공통으로 적용할 수 있다.
+
+```java
+@Controller
+@RequestMapping("/board")
+public class HomeController {
+    // 요청 경로 : context명/board/list
+    @RequestMapping("/list")
+    public String list(Model model) {
+        model.addAttribute("name", "Kim");
+        return "board/write";
+    }
+}
+```
+
+
+
+# Form 데이터 가져오기
+
+## HttpServletRequest 클래스
+
+servlet과 방법이 비슷하다.
+
+```java
+@RequestMapping("/board/confirmId")
+public String confirmId(HttpServletRequest request, Model model) {
+    // 파라미터 get
+    String id = request.getParameter("id");
+    String pw = request.getParameter("pw");
+
+    // 모델에 데이터 추가
+    model.addAttribute("id", id);
+    model.addAttribute("pw", pw);
+
+    return "board/confirmId";
+}
+```
+
+
+
+## @RequestParam
+
+파라미터를 받아와서 변수에 할당한다.
+
+```java
+@RequestMapping("/board/confirmId")
+public String confirmId(@RequestParam("id") String id, @RequestParam("pw") int pw, Model model) {
+    // 인자에 명시된 파라미터를 받지 못하면 400에러 발생
+    model.addAttribute("id", id);
+    model.addAttribute("pw", pw);
+    
+    return "board/confirmId";
+}
+```
+
+
+
+## 데이터(커맨드) 객체
+
+인자로 객체를 받으면 객체화, setter, addAttribute 과정을 모두 스프링이 알아서 처리해준다.
+
+```java
+@RequestMapping("/member/join")
+public String joinData(Member member) {
+    /* 스프링이 알아서 해준다.
+    Member member = new Member();
+    member.setName(name);
+    ...
+    model.addAttribute("member", member);
+    */
+    return "member/join";
+}
+```
+
+```jsp
+이름 : ${member.name}
+```
+
+
+
+## @PathVariable
+
+경로에 변수를 넣어 파라미터로 이용할 수 있다. (자주 사용하지는 않는다.)
+
+```java
+// 요청 경로 : context명/student/10
+
+@RequestMapping("/student/{studentId}")
+public String getStudent(@PathVariable String studentId, Model model) {
+    model.addAttribute("studentId", studentId);
+    return "student/studentView";
+}
+```
+
+
+
+# @RequestMapping 파라미터
+
+## Get, Post
+
+```java
+// Get 방식으로 수신
+@RequestMapping(value = "/student", method = RequestMethod.GET)
+// Post 방식으로 수신
+@RequestMapping(value = "/student", method = RequestMethod.POST)
+// Get, Post 모두 수신
+@RequestMapping("/student")
+```
+
+
+
+## @ModelAttribute
+
+커맨드 객체의 이름을 지정할 수 있다.
+
+```java
+@RequestMapping("/studentView")
+public String studentView(@ModelAttribute("studentInfo") StudentInformation studentInformation) {
+    // 원래 커맨드 객체는 studentInformation인데 studentInfo로 줄임.
+    return "studentView";
+}
+```
+
+```jsp
+이름 : ${studentInfo.name}
+```
+
+
+
+## redirect
+
+페이지를 이동할 때 사용
+
+```java
+@RequestMapping("/home")
+public String home() {
+    return "redirect:home";
+    // context명/home 경로로 이동
+}
+```
+
+WEB-INF 안에 있는 파일은 직접 주소를 입력해서 접근할 수 없다.
