@@ -808,3 +808,123 @@ public String home() {
 ```
 
 WEB-INF 안에 있는 파일은 직접 주소를 입력해서 접근할 수 없다.
+
+
+
+# 폼 데이터 값 검증
+
+## Validator 이용
+
+```java
+@RequestMapping("/student/create")
+public String studentCreate(@ModelAttribute("student") Student student, BindingResult result) {
+
+    String page = "createDonePage";  // 성공 시
+
+    StudentValidator validator = new StudentValidator();
+    validator.validate(student, result);
+    if(result.hasErrors()) {
+        page = "createPage"; // 실패 시
+    }
+
+    return page;
+}
+```
+
+```java
+public class StudentValidator implements Validator {
+
+	@Override
+	public boolean supports(Class<?> arg0) {
+		return Student.class.isAssignableFrom(arg0);  // 검증할 객체의 클래스 타입 정보
+	}
+
+	@Override
+	public void validate(Object obj, Errors errors) {
+		System.out.println("validate()");
+		Student student = (Student)obj;
+		// 문자열 검사
+		String studentName = student.getName();
+		if(studentName == null || studentName.trim().isEmpty()) {
+			System.out.println("studentName is null or empty");
+			errors.rejectValue("name", "trouble");
+		}
+		// 숫자 검사
+		int studentId = student.getId();
+		if(studentId == 0) {
+			System.out.println("studentId is 0");
+			errors.rejectValue("id", "trouble");
+		}
+	}
+	
+}
+```
+
+
+
+## ValidationUtils 클래스
+
+validate() 메소드를 좀 더 편리하게 사용할 수 있도록 만든 클래스
+
+```java
+/*
+String studentName = student.getName();
+if(studentName == null || studentName.trim().isEmpty()) {
+    System.out.println("studentName is null or empty");
+    errors.rejectValue("name", "trouble");
+}
+*/
+ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "trouble");
+```
+
+
+
+## @Valid와 @InitBinder
+
+직접 호출하지 않고, 스프링 프레임워크에서 호출
+
+```java
+@RequestMapping("/student/create")
+// 변수 앞에 @Valid 추가
+public String studentCreate(@ModelAttribute("student") @Valid Student student, BindingResult result) {
+
+    String page = "createDonePage";
+	// 기존 방식
+    //StudentValidator validator = new StudentValidator();
+    //validator.validate(student, result);
+    if(result.hasErrors()) {
+        page = "createPage";
+    }
+
+    return page;
+}
+// @InitBinder 추가
+@InitBinder
+protected void initBinder(WebDataBinder binder){
+    binder.setValidator(new StudentValidator());
+}
+```
+
+```xml
+<!-- pom.xml에 의존 추가 -->
+<dependency>
+	<groupId>org.hibernate</groupId>
+    <artifactId>hibernate-validator</artifactId>
+    <version>4.2.0.Final</version>
+</dependency>
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

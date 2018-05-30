@@ -1,8 +1,6 @@
 # 프로젝트 생성 후 세팅
 
-## maven clean, install 후 서버 동작 확인
-
-## pom.xml 설정
+## pom.xml
 
 java-version : 1.8
 프로젝트 Properties - Project Facets - Java 버전 1.8
@@ -61,7 +59,7 @@ springframwork-version : 4.3.14.RELEASE
 
 
 
-## web.xml 설정
+## web.xml
 
 ```xml
 <!-- 한글깨짐 방지 -->
@@ -85,7 +83,7 @@ springframwork-version : 4.3.14.RELEASE
 
 
 
-## servlet-context.xml 설정
+## servlet-context.xml
 
 ```xml
 <!-- DB 접속 정보 설정 -->
@@ -110,7 +108,7 @@ springframwork-version : 4.3.14.RELEASE
 
 
 
-## log4j.xml 설정
+## log4j.xml
 
 logger를 모든 패키지에서 사용하기 위해 name="com.spring" 까지만 적어줌.
 
@@ -135,3 +133,8 @@ logger를 모든 패키지에서 사용하기 위해 name="com.spring" 까지만
 </mapper>
 ```
 
+
+
+# tools.jar 에러
+
+window - Preferences - Java - Installed JREs - jre 클릭 - Edit - Add External JARs... - jdk 폴더 - lib - tools.jar 추가
