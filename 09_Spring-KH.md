@@ -130,7 +130,7 @@ Namespaces : bean, context, util
 	</bean>
 	
 	<!-- template 설정(XML과 Java를 연결) -->
-	<bean id="myBatisMapper" class="org.mybatis.spring.SqlSessionTemplate">
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
 	    <constructor-arg index="0" ref="sqlSessionFactory"/>
 	</bean>
 
@@ -197,7 +197,13 @@ Namespaces : bean
 ## log4j.xml
 
 ```xml
-    <!-- SQL Loggers -->
+	<!-- 마지막 패키지 지움 -->	
+	<!-- <logger name="com.spring.controller"> -->
+	<logger name="com.spring">  
+		<level value="info" />
+	</logger>
+
+	<!-- SQL Loggers -->
     <logger name="jdbc.sqlonly" additivity="false">
         <level value="info" />
         <appender-ref ref="console" />
@@ -225,123 +231,59 @@ level value="off" 로 하면 보여주지 않는다.
 
 
 
+## Controller.java
 
-
-
-
-# 기본 세팅
-
-## pom.xml
-
-java-version : 1.8
-프로젝트 Properties - Project Facets - Java 버전 1.8
-springframwork-version : 4.3.14.RELEASE
-
-라이브러리 추가
-
-```xml
-    <!-- 사설저장소 -->
-    <repositories>
-        <repository>
-            <id>codelds</id>
-            <url>http://code.lds.org/nexus/content/groups/main-repo</url>
-        </repository>
-    </repositories>
-
-    <dependencies>
-        <!-- ... -->
-
-        <!-- Oracle JDBC Driver -->
-        <!-- version뒤에 .0 지움 -->
-        <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc14</artifactId>
-            <version>10.2.0.3</version>
-        </dependency>
-
-        <!-- Spring JDBC -->
-        <!-- version 수정 -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <version>${org.springframework-version}</version>
-        </dependency>
-
-        <!-- MyBatis -->
-        <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis</artifactId>
-            <version>3.4.5</version>
-        </dependency>
-
-        <!-- MyBatis Spring -->
-        <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis-spring</artifactId>
-            <version>1.3.1</version>
-        </dependency>
-
-    </dependencies>
+```java
+@Controller
+public class HomeController {
+    
+    @Autowired
+	private SqlSession sqlSession;  // MyBatis 사용을 위한 객체
+	SqlInterface inter;
+    
+    @RequestMapping(value = "/")
+	public String list(Model model) {
+		inter = sqlSession.getMapper(SqlInterface.class);
+		model.addAttribute("list", inter.list());
+		
+		return "list";
+	}
+    
+    // ...
+}
 ```
 
 
 
-## web.xml
+## dao/SqlInterface.java
 
-```xml
-<!-- 한글깨짐 방지 -->
-<filter>
-    <filter-name>encodingFilter</filter-name>
-    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
-    <init-param>
-        <param-name>encoding</param-name>
-        <param-value>UTF-8</param-value>
-    </init-param>
-    <init-param>
-        <param-name>forceEncoding</param-name>
-        <param-value>true</param-value>
-    </init-param>
-</filter>
-<filter-mapping>
-    <filter-name>encodingFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-</filter-mapping>
+```java
+public interface SqlInterface {
+	
+	ArrayList<BoardBean> list();
+	void write(String userName, String subject, String content);
+	// ...
+}
 ```
 
 
 
-## servlet-context.xml
+## dao/*mapper.xml
 
 ```xml
-<!-- scan할 패키지 추가 -->
-<context:component-scan base-package="com.spring.service" />
-
-<!-- DB 접속 정보 설정 -->
-<beans:bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-    <beans:property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
-    <beans:property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
-    <beans:property name="username" value="사용자명"/>
-    <beans:property name="password" value="비밀번호"/>
-</beans:bean>
-
-<!-- MyBatis 설정 -->
-<beans:bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-    <beans:property name="dataSource" ref="dataSource"/>
-    <beans:property name="mapperLocations" value="classpath:패키지명/dao/*mapper.xml"/>
-    <beans:property name="configLocation" value="classpath:/config/mybatis-config.xml"/>
-</beans:bean>
-
-<!-- template 설정(XML과 Java를 연결) -->
-<beans:bean id="myBatisMapper" class="org.mybatis.spring.SqlSessionTemplate">
-    <beans:constructor-arg index="0" ref="sqlSessionFactory"/>
-</beans:bean>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">    
+<mapper namespace="패키지.인터페이스">
+    <!--
+    <select id="메소드명" resultType="반환형">
+        쿼리문 (인자는 #{param1} 형식으로 받음)
+	</select>
+	...
+	-->
+</mapper>
 ```
-
-
-
-## log4j.xml
-
-logger를 모든 패키지에서 사용하기 위해 name="com.spring" 까지만 적어줌.
 
 
 
@@ -352,6 +294,7 @@ logger를 모든 패키지에서 사용하기 위해 name="com.spring" 까지만
 ```java
 @Controller
 public class HomeController {
+    
     @Autowired
 	private SqlSession sqlSession;  // MyBatis 사용을 위한 객체
 	SqlInterface inter;
