@@ -126,7 +126,10 @@ Namespaces : bean, context, util
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 	    <property name="dataSource" ref="dataSource"/>
 	    <property name="mapperLocations" value="classpath:com/spring/dao/*mapper.xml"/>
-	    <property name="configLocation" value="classpath:/config/mybatis-config.xml"/>
+		<!-- DBCP 설정 -->
+	    <property name="environment" value="classpath:/config/mybatis-config.xml"/>
+		<!-- alias 설정 -->
+	    <property name="configLocation" value="classpath:/config/alias.xml"/>
 	</bean>
 	
 	<!-- template 설정(XML과 Java를 연결) -->
@@ -165,24 +168,24 @@ Namespaces : bean
 
 ## resources/config/mybatis-config.xml
 
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE configuration
     PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-config.dtd">
-<configuration>
-	<environments default="development">
-		<environment id="development">
-			<transactionManager type="JDBC"></transactionManager>
-			<dataSource type="POOLED">
-				<property name="poolMaximumActiveConnections" value="10"/>
-				<property name="poolMaximumIdleConnections" value="10"/>
-				<property name="poolMaximumCheckoutTime" value="20000"/>
-				<property name="poolTimeToWait" value="10000"/>
-			</dataSource>
-		</environment>
-	</environments>
-</configuration>
+<!-- <configuration> -->
+<environments default="development">
+    <environment id="development">
+        <transactionManager type="JDBC"></transactionManager>
+        <dataSource type="POOLED">
+            <property name="poolMaximumActiveConnections" value="10"/>
+            <property name="poolMaximumIdleConnections" value="10"/>
+            <property name="poolMaximumCheckoutTime" value="20000"/>
+            <property name="poolTimeToWait" value="10000"/>
+        </dataSource>
+    </environment>
+</environments>
+<!--</configuration> -->
 ```
 
 - transactionManager type="JDBC | MANAGED" : 트랜잭션 자동 처리를 JDBC | MyBatis 에게 맡긴다.
@@ -191,6 +194,22 @@ Namespaces : bean
 - poolMaximumIdleConnections : 최대 대기 커넥션 수
 - poolMaximumCheckoutTime (ms) : 커넥션 요청 후 획득까지 기다리는 시간
 - poolTimeToWait (ms) : 커넥션 획득을 기다리는 시간
+
+
+
+## resources/config/alias.xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias alias="MemberDTO" type="com.spring.dto.MemberDTO"/>
+	</typeAliases>
+</configuration>
+```
 
 
 
@@ -237,11 +256,14 @@ level value="off" 로 하면 보여주지 않는다.
 @Controller
 public class HomeController {
     
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    
+    /* 방법 1. 직접 처리 */
     @Autowired
-	private SqlSession sqlSession;  // MyBatis 사용을 위한 객체
+	private SqlSession sqlSession;  
 	SqlInterface inter;
     
-    @RequestMapping(value = "/")
+    @RequestMapping(value = "/list")
 	public String list(Model model) {
 		inter = sqlSession.getMapper(SqlInterface.class);
 		model.addAttribute("list", inter.list());
@@ -249,7 +271,64 @@ public class HomeController {
 		return "list";
 	}
     
-    // ...
+    /* 방법 2. 서비스 이용 */
+	@Autowired
+	Service service;
+    
+	@RequestMapping(value = "/join", method = RequestMethod.POST)
+	public ModelAndView join(@RequestParam HashMap<String, String> map) {
+		logger.info("회원가입 요청");
+		logger.info("id : " + map.get("user_id"));
+		logger.info("pw : " + map.get("user_pw"));
+		logger.info("name : " + map.get("user_name"));
+		logger.info("age : " + map.get("user_age"));
+		logger.info("gender : " + map.get("user_gender"));
+		logger.info("email : " + map.get("user_email"));
+		
+		return service.join(map);
+	}
+    
+}
+```
+
+
+
+## Service.java
+
+```java
+@Service
+public class Service {
+	
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	
+    @Autowired
+	private SqlSession sqlSession;
+	MemberInter inter;
+
+	public ModelAndView join(HashMap<String, String> map) {
+		// mapper 연결
+		inter = sqlSession.getMapper(MemberInter.class);
+		
+		// 쿼리 실행
+		int success = inter.join(map);
+		logger.info("join 결과 : " + success);
+
+		// 결과 확인
+		String page = "joinForm";
+		String msg = "회원가입에 실패했습니다.";
+		if (success > 0) {
+			page = "main";
+			msg = "회원가입에 성공했습니다.";
+		}
+		
+		// ModelAndView에 데이터 넣기
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("msg", msg);
+		mav.setViewName(page);
+		
+		return mav;
+	}
+
 }
 ```
 
@@ -261,7 +340,7 @@ public class HomeController {
 public interface SqlInterface {
 	
 	ArrayList<BoardBean> list();
-	void write(String userName, String subject, String content);
+	void write(HashMap<String, String> map);
 	// ...
 }
 ```
@@ -277,8 +356,8 @@ public interface SqlInterface {
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">    
 <mapper namespace="패키지.인터페이스">
     <!--
-    <select id="메소드명" resultType="반환형">
-        쿼리문 (인자는 #{param1} 형식으로 받음)
+    <select id="메소드명" [parameterType="파라미터 클래스명" resultType="반환형 클래스명"]>
+        쿼리문... 인자는 #{param1}, #{변수명} 형식으로 받음
 	</select>
 	...
 	-->
@@ -468,6 +547,35 @@ level value="off" 로 하면 보여주지 않는다.
     <beans:property name="password" value="pass"/>
 </beans:bean>
 ```
+
+
+
+# 모든 클래스에서 Logger 사용
+
+```java
+private Logger logger = LoggerFactory.getLogger(this.getClass());
+```
+
+
+
+# 여러개의 파라미터를 받을 때
+
+```java
+@RequestMapping(value = "/join", method = RequestMethod.POST)
+public String join(@RequestParam HashMap<String, String> map) {
+    logger.info("회원가입 요청");
+    logger.info("id : " + map.get("user_id"));
+    logger.info("pw : " + map.get("user_pw"));
+    logger.info("name : " + map.get("user_name"));
+    logger.info("age : " + map.get("user_age"));
+    logger.info("gender : " + map.get("user_gender"));
+    logger.info("email : " + map.get("user_email"));
+
+    return "/loginForm";
+}
+```
+
+
 
 
 
