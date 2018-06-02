@@ -772,7 +772,7 @@ public String getStudent(@PathVariable String studentId, Model model) {
 // Post 방식으로 수신
 @RequestMapping(value = "/student", method = RequestMethod.POST)
 // Get, Post 모두 수신
-@RequestMapping("/student")
+@RequestMapping(value = "/student")
 ```
 
 
