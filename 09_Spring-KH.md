@@ -222,12 +222,12 @@ Namespaces : bean
     </logger>
 ```
 
+- level
+  - off, fatal, error, warn, info, debug, trace
 - jdbc.sqlonly : SQL문만을 로그로 보여준다. param으로 설정한 값도 보여준다.
 - jdbc.sqltiming : SQL문과 SQL을 실행시키는데 수행된 시간을 보여준다.
 - jdbc.connection : connection의 open & close 기록을 보여준다.
 - jdbc.resultsettable : SQL 결과 테이블을 보여준다.
-
-level value="off" 로 하면 보여주지 않는다.
 
 
 
@@ -444,12 +444,12 @@ JDBC에서 수행하는 내용을 log로 보여준다.
     </logger>
 ```
 
+- level
+  - off, fatal, error, warn, info, debug, trace
 - jdbc.sqlonly : SQL문만을 로그로 보여준다. param으로 설정한 값도 보여준다.
 - jdbc.sqltiming : SQL문과 SQL을 실행시키는데 수행된 시간을 보여준다.
 - jdbc.connection : connection의 open & close 기록을 보여준다.
 - jdbc.resultsettable : SQL 결과 테이블을 보여준다.
-
-level value="off" 로 하면 보여주지 않는다.
 
 
 
