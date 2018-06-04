@@ -64,6 +64,27 @@ springframwork-version : 4.3.14.RELEASE
             <artifactId>log4jdbc-remix</artifactId>
             <version>0.2.7</version>
         </dependency>
+        
+        <!-- CGLIB(트랜잭션) -->
+		<dependency>
+		    <groupId>cglib</groupId>
+		    <artifactId>cglib</artifactId>
+		    <version>3.2.4</version>
+		</dependency>
+        
+		<!-- Jackson Databind -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.9.4</version>
+		</dependency>
+		
+		<!-- Jackson Core -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-core</artifactId>
+		    <version>2.9.4</version>
+		</dependency>
 
     </dependencies>
 ```
@@ -100,6 +121,9 @@ springframwork-version : 4.3.14.RELEASE
 	
 	<!-- MyBatis 설정 import -->
 	<beans:import resource="classpath:config/mybatis.xml" />
+
+	<!-- 트랜잭션 설정 import -->
+	<beans:import resource="classpath:config/transaction.xml" />
 ```
 
 
@@ -206,9 +230,35 @@ Namespaces : bean
     "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<typeAliases>
-		<typeAlias alias="MemberDTO" type="com.spring.dto.MemberDTO"/>
+		<typeAlias alias="별칭" type="패키지.클래스(풀네임)"/>
 	</typeAliases>
 </configuration>
+```
+
+
+
+## resources/config/transaction.xml
+
+Spring Bean Configuration File로 생성
+Namespaces : beans, tf
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<!-- transaction manager 빈 등록 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- @Transactional을 메소드에 사용하도록 -->
+	<tx:annotation-driven proxy-target-class="false"/>
+
+</beans>
 ```
 
 
@@ -216,7 +266,7 @@ Namespaces : bean
 ## log4j.xml
 
 ```xml
-	<!-- 마지막 패키지 지움 -->	
+	<!-- Application Loggers 마지막 패키지 지움 -->
 	<!-- <logger name="com.spring.controller"> -->
 	<logger name="com.spring">  
 		<level value="info" />
@@ -577,5 +627,249 @@ public String join(@RequestParam HashMap<String, String> map) {
 
 
 
+# 트랜잭션
 
+## pom.xml
+
+```xml
+        <!-- CGLIB -->
+		<dependency>
+		    <groupId>cglib</groupId>
+		    <artifactId>cglib</artifactId>
+		    <version>3.2.4</version>
+		</dependency>
+```
+
+
+
+## servlet.xml
+
+```xml
+	<!-- 트랜잭션 설정 import -->
+	<beans:import resource="classpath:config/transaction.xml" />
+```
+
+
+
+## resources/config/transaction.xml
+
+Spring Bean Configuration File로 생성
+Namespaces : beans, tf
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<!-- transaction manager 빈 등록 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- @Transactional을 메소드에 사용하도록 -->
+	<tx:annotation-driven proxy-target-class="false"/>
+
+</beans>
+```
+
+
+
+## Service.java
+
+```java
+	// 상세보기
+	@Transactional  // 메소드에 트랜잭션 걸어줌
+	public ModelAndView detail(String idx) {
+		ModelAndView mav = new ModelAndView();
+		
+		inter = sqlSession.getMapper(BoardInter.class);
+		// 조회수 올리기
+		inter.upHit(idx);
+		// 상세보기
+		mav.addObject("dto", inter.detail(idx));
+		mav.setViewName("detail");
+		return mav;
+	}
+```
+
+
+
+# Restful
+
+Java 객체를 JSON으로 변환(jackson)
+
+## pom.xml
+
+```xml
+		<!-- Jackson Databind -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.9.4</version>
+		</dependency>
+		
+		<!-- Jackson Core -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-core</artifactId>
+		    <version>2.9.4</version>
+		</dependency>
+```
+
+
+
+## 방법 1. @RequestMapping 이용
+
+#### HomeController.java
+
+```java
+	// list
+	@RequestMapping(value = "/list")
+	public @ResponseBody ArrayList<String> respList() {
+		ArrayList<String> list = new ArrayList<String>();
+		list.add("first");
+		list.add("second");
+		list.add("third");
+		return list;
+        // url에 /list 입력 시
+        // ["first","second","third"]
+	}
+	
+	// map
+	@RequestMapping(value = "/map")
+	public @ResponseBody HashMap<String, Object> respMap() {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("msg", "hello");
+		map.put("age", 22);
+		map.put("married", false);
+		return map;
+        // {"msg":"hello","married":false,"age":22}
+	}
+	
+	// obj
+	@RequestMapping(value = "/obj")
+	public @ResponseBody UserInfo respObj() {
+		UserInfo info = new UserInfo();
+		info.setId("user1");
+		info.setName("Kim");
+		info.setAge(26);
+		info.setMarried(false);
+		return info;
+        // {"id":"user1","name":"Kim","age":26,"married":false}
+	}
+```
+
+
+
+## 방법 2. @RestController 이용
+
+#### AjaxController.java
+
+```java
+// @RestController를 쓰면 반환타입에 @ResponseBody를 사용하지 않아도 된다.
+@RestController
+@RequestMapping(value = "/rest")
+public class AjaxController {
+    
+    private static final Logger logger = LoggerFactory.getLogger(AjaxController.class);
+	
+	// list
+	@RequestMapping(value = "/list")
+	public ArrayList<String> respList() {
+		logger.info("/rest/list 요청");
+		ArrayList<String> list = new ArrayList<String>();
+		list.add("first");
+		list.add("second");
+		list.add("third");
+		return list;
+        // url에 /rest/list 입력 시
+        // ["first","second","third"]
+	}
+	
+	// map
+	@RequestMapping(value = "/map")
+	public HashMap<String, Object> respMap() {
+		logger.info("/rest/map 요청");
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("msg", "hello");
+		map.put("age", 22);
+		map.put("married", false);
+		return map;
+	}
+	
+	// obj
+	@RequestMapping(value = "/obj")
+	public UserInfo respObj() {
+		logger.info("/rest/obj 요청");
+		UserInfo info = new UserInfo();
+		info.setId("user1");
+		info.setName("Kim");
+		info.setAge(26);
+		info.setMarried(false);
+		return info;
+	}
+	
+	
+}
+```
+
+
+
+# @PathVariable
+
+URL를 인자로 받을 수 있다.
+
+```java
+	@RequestMapping(value = "/test/{num1}/{num2}")
+	public String test(@PathVariable String num1, @PathVariable String num2) {
+		logger.info(num1);
+		logger.info(num2);
+		return "home";
+	}
+```
+
+
+
+# Ajax
+
+## JavaScript
+
+```javascript
+	$.ajax({
+        url: "./login",
+        type: "post",
+        data: {
+            id: $("#id").val(),
+            pw: $("#pw").val()
+        },
+        dataType: "json",
+        success: function(data) {
+            console.log(data);
+        },
+        error: function(err) {console.log(err);}
+    });
+```
+
+## Controller.java
+
+```java
+	@RequestMapping(value = "/login")
+	public @ResponseBody HashMap<String, Object> list(@RequestParam HashMap<String, String> params) {
+		HashMap<String, Object> map = new HashMap<>();
+		
+		String id = params.get("id");
+		String pw = params.get("pw");
+		
+		logger.info(id);
+		logger.info(pw);
+		
+		map.put("id", id);
+		map.put("pw", pw);
+		
+		return map;  // JSON 형태로 변환하여 반환(@ResponseBody 때문)
+	}
+```
 
