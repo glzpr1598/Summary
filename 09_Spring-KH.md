@@ -117,7 +117,7 @@ springframwork-version : 4.3.14.RELEASE
 
 ```xml
 	<!-- scan할 패키지 추가 -->
-	<context:component-scan base-package="com.spring.service" />
+	<context:component-scan base-package="패키지.service" />
 	
 	<!-- MyBatis 설정 import -->
 	<beans:import resource="classpath:config/mybatis.xml" />
@@ -149,7 +149,8 @@ Namespaces : bean, context, util
 	<!-- MyBatis 설정 -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 	    <property name="dataSource" ref="dataSource"/>
-	    <property name="mapperLocations" value="classpath:com/spring/dao/*mapper.xml"/>
+		<!-- mapper import -->
+	    <property name="mapperLocations" value="classpath:패키지/dao/*mapper.xml"/>
 		<!-- DBCP 설정 -->
 	    <property name="environment" value="classpath:/config/mybatis-config.xml"/>
 		<!-- alias 설정 -->
@@ -308,7 +309,7 @@ public class HomeController {
     
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     
-    /* 방법 1. 직접 처리 */
+    /* 방법 1. 컨트롤러에서 직접 처리 */
     @Autowired
 	private SqlSession sqlSession;  
 	SqlInterface inter;
@@ -872,4 +873,6 @@ URL를 인자로 받을 수 있다.
 		return map;  // JSON 형태로 변환하여 반환(@ResponseBody 때문)
 	}
 ```
+
+
 

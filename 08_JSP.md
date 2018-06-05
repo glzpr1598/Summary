@@ -653,6 +653,16 @@ public ArrayList<DTO> pagedList(int startNum, int endNum) {
         "		ORDER BY 정렬할컬럼 DESC) A " + 
         "	WHERE ROWNUM <= ?) X " + 
         "WHERE X.rnum >= ?";
+    
+    /* 학원에서 사용한 쿼리문 */
+    /*
+    String sql = "SELECT 컬럼, ... "
+		"FROM ( " +
+		"	SELECT 컬럼, ..., ROW_NUMBER() OVER(ORDER BY 정렬할컬럼 DESC) AS rnum " +
+		"	FROM 테이블 " +
+		") " +
+		"WHERE rnum BETWEEN ? AND ?";
+	*/
 
     try {
         ps = conn.prepareStatement(sql);
