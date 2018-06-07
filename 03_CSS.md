@@ -16,61 +16,61 @@
 ### 태그 선택자
 
 ```css
-p{}
+p {}
 ```
 
 ### 클래스 선택자
 
 ```css
-.클래스명{}
+.클래스명 {}
 ```
 
 ### 아이디 선택자
 
 ```css
-#아이디{}
+#아이디 {}
 ```
 
 ### 복수 선택자
 
 ```css
-p, div{}
+p, div {}
 ```
 
 ### 조상 자손 선택자
 
 ```css
-div p{}
+div p {}
 ```
 
 ### 부모 자식 선택자
 
 ```css
-div>p{}
+div > p {}
 ```
 
 ### 특정 속성을 가진 태그 선택자
 
 ```css
-input[type="text"]{}
+input[type="text"] {}
 ```
 
 ### 띄어쓰기 단위로 구분된 단어를 포함하는 선택자
 
 ```css
-img[alt~="이미지01"]{}
+img[alt~="이미지01"] {}
 ```
 
 ### 단어를 포함하는 선택자
 
 ```css
-img[alt*="미지02"]{}
+img[alt*="미지02"] {}
 ```
 
 ### 링크가 걸려 있는 상태
 
 ```css
-a:link{
+a:link {
 	color: black;
 	text-decoration: none;
 }
@@ -79,7 +79,7 @@ a:link{
 ### 마우스를 올렸을 때(hand over)
 
 ```css
-a:hover{
+a:hover {
 	text-decoration: underline;
 }
 ```
@@ -87,13 +87,19 @@ a:hover{
 ### 클릭 했을 때
 
 ```css
-a:active{}
+a:active {}
+```
+
+### input에 포커스했을 때
+
+```css
+input:focus
 ```
 
 ### 링크를 방문했을 때
 
 ```css
-a:visited{
+a:visited {
 	color: gray;
 }
 ```
@@ -101,7 +107,7 @@ a:visited{
 ### 체크된 요소
 
 ```css
-input[type="checkbox"]:checked{}
+input[type="checkbox"]:checked {}
 ```
 
 

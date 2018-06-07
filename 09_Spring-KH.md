@@ -72,13 +72,13 @@ springframwork-version : 4.3.14.RELEASE
 		    <version>3.2.4</version>
 		</dependency>
         
+		<!-- RestFul -->
 		<!-- Jackson Databind -->
 		<dependency>
 		    <groupId>com.fasterxml.jackson.core</groupId>
 		    <artifactId>jackson-databind</artifactId>
 		    <version>2.9.4</version>
 		</dependency>
-		
 		<!-- Jackson Core -->
 		<dependency>
 		    <groupId>com.fasterxml.jackson.core</groupId>
@@ -131,7 +131,7 @@ springframwork-version : 4.3.14.RELEASE
 ## resources/config/mybatis.xml
 
 Spring Bean Configuration File로 생성
-Namespaces : bean, context, util
+Namespaces : beans, context, util
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -170,7 +170,7 @@ Namespaces : bean, context, util
 ## resources/config/dataSource.xml
 
 Spring Bean Configuration File로 생성
-Namespaces : bean
+Namespaces : beans
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -609,7 +609,10 @@ private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
 
-# 여러개의 파라미터를 받을 때
+# @RequestParam
+
+@RequestParam("파라미터명") String 변수명 : 특정 파라미터를 받는다.
+@RequestParam HashMap<String, String> map : 모든 파라미터를 받는다.
 
 ```java
 @RequestMapping(value = "/join", method = RequestMethod.POST)
@@ -722,7 +725,7 @@ Java 객체를 JSON으로 변환(jackson)
 
 
 
-## 방법 1. @RequestMapping 이용
+## 방법 1. @ResponseBody이용
 
 #### HomeController.java
 
@@ -826,6 +829,7 @@ URL를 인자로 받을 수 있다.
 ```java
 	@RequestMapping(value = "/test/{num1}/{num2}")
 	public String test(@PathVariable String num1, @PathVariable String num2) {
+        // 인자를 int형으로도 받을 수 있다.
 		logger.info(num1);
 		logger.info(num2);
 		return "home";
@@ -876,3 +880,10 @@ URL를 인자로 받을 수 있다.
 
 
 
+# 동적 쿼리
+
+http://www.mybatis.org/mybatis-3/ko/dynamic-sql.html
+
+파라미터를 작은따옴표를 제외하고 입력하려면 #이 아닌 $를 쓰면 된다.
+
+UPDATE teams SET ${param2} = #{param3} WHERE num = #{param1}
