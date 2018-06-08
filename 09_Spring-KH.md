@@ -19,53 +19,53 @@ springframwork-version : 4.3.14.RELEASE
 
     <dependencies>
         
-        <!-- ... -->
+		<!-- ... -->
 
-        <!-- Oracle JDBC Driver -->
-        <!-- version뒤에 .0 지움 -->
-        <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc14</artifactId>
-            <version>10.2.0.3</version>
-        </dependency>
+		<!-- Oracle JDBC Driver -->
+		<!-- version뒤에 .0 지움 -->
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc14</artifactId>
+			<version>10.2.0.3</version>
+		</dependency>
 
-        <!-- Spring JDBC -->
-        <!-- version 수정 -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <version>${org.springframework-version}</version>
-        </dependency>
+		<!-- Spring JDBC -->
+		<!-- version 수정 -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
 
-        <!-- MyBatis -->
-        <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis</artifactId>
-            <version>3.4.5</version>
-        </dependency>
+		<!-- MyBatis -->
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+			<version>3.4.5</version>
+		</dependency>
 
-        <!-- MyBatis Spring -->
-        <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis-spring</artifactId>
-            <version>1.3.1</version>
-        </dependency>
+		<!-- MyBatis Spring -->
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-spring</artifactId>
+			<version>1.3.1</version>
+		</dependency>
         
-        <!-- Commons DBCP -->
-        <dependency>
+		<!-- Commons DBCP -->
+		<dependency>
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
             <version>1.4</version>
-        </dependency>
+		</dependency>
         
-        <!-- Log4Jdbc Remix -->
-        <dependency>
+		<!-- Log4Jdbc Remix -->
+		<dependency>
             <groupId>org.lazyluke</groupId>
             <artifactId>log4jdbc-remix</artifactId>
             <version>0.2.7</version>
-        </dependency>
+		</dependency>
         
-        <!-- CGLIB(트랜잭션) -->
+		<!-- CGLIB(트랜잭션) -->
 		<dependency>
 		    <groupId>cglib</groupId>
 		    <artifactId>cglib</artifactId>
@@ -84,6 +84,22 @@ springframwork-version : 4.3.14.RELEASE
 		    <groupId>com.fasterxml.jackson.core</groupId>
 		    <artifactId>jackson-core</artifactId>
 		    <version>2.9.4</version>
+		</dependency>
+        
+		<!-- 파일 업로드 -->		
+		<!-- Apache Commons FileUpload -->
+		<dependency>
+		    <groupId>commons-fileupload</groupId>
+		    <artifactId>commons-fileupload</artifactId>
+		    <version>1.3.2</version>
+		</dependency>
+		
+		<!-- MultipartFile 사용 -->
+		<!-- Apache Commons IO -->
+		<dependency>
+		    <groupId>commons-io</groupId>
+		    <artifactId>commons-io</artifactId>
+		    <version>2.5</version>
 		</dependency>
 
     </dependencies>
@@ -124,6 +140,9 @@ springframwork-version : 4.3.14.RELEASE
 
 	<!-- 트랜잭션 설정 import -->
 	<beans:import resource="classpath:config/transaction.xml" />
+
+	<!-- 파일 서비스 설정 import -->
+	<beans:import resource="classpath:config/fileService.xml" />
 ```
 
 
@@ -131,7 +150,7 @@ springframwork-version : 4.3.14.RELEASE
 ## resources/config/mybatis.xml
 
 Spring Bean Configuration File로 생성
-Namespaces : beans, context, util
+Namespaces : beans
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -152,9 +171,9 @@ Namespaces : beans, context, util
 		<!-- mapper import -->
 	    <property name="mapperLocations" value="classpath:패키지/dao/*mapper.xml"/>
 		<!-- DBCP 설정 -->
-	    <property name="environment" value="classpath:/config/mybatis-config.xml"/>
+	    <property name="environment" value="classpath:config/dbcp.xml"/>
 		<!-- alias 설정 -->
-	    <property name="configLocation" value="classpath:/config/alias.xml"/>
+	    <property name="configLocation" value="classpath:config/alias.xml"/>
 	</bean>
 	
 	<!-- template 설정(XML과 Java를 연결) -->
@@ -191,7 +210,7 @@ Namespaces : beans
 
 
 
-## resources/config/mybatis-config.xml
+## resources/config/dbcp.xml
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -231,7 +250,10 @@ Namespaces : beans
     "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<typeAliases>
-		<typeAlias alias="별칭" type="패키지.클래스(풀네임)"/>
+        <!-- 방법 1 -->
+		<typeAlias alias="별칭" type="패키지.클래스(풀네임)" />
+        <!-- 방법 2 -->
+		<package name="패키지" /> <!-- 해당 클래스에 @Alias("별칭") 명시 -->
 	</typeAliases>
 </configuration>
 ```
@@ -259,6 +281,31 @@ Namespaces : beans, tf
 	<!-- @Transactional을 메소드에 사용하도록 -->
 	<tx:annotation-driven proxy-target-class="false"/>
 
+</beans>
+```
+
+
+
+## resources/config/transaction.xml
+
+Spring Bean Configuration File로 생성
+Namespaces : beans
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 인코딩 -->
+		<property name="defaultEncoding" value="UTF-8" />
+		<!-- 용량 제한(byte) -->
+		<property name="maxUploadSize" value="10000000" />
+		<!-- 버퍼 용량(byte) -->
+		<property name="maxInMemorySize" value="10000000" />
+	</bean>
+	
 </beans>
 ```
 
@@ -407,10 +454,20 @@ public interface SqlInterface {
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">    
 <mapper namespace="패키지.인터페이스">
     <!--
-    <select id="메소드명" [parameterType="파라미터 클래스명" resultType="반환형 클래스명"]>
+    <select id="메소드명" [속성 ...]>
         쿼리문... 인자는 #{param1}, #{변수명} 형식으로 받음
 	</select>
-	...
+	-->
+    <!-- 속성값
+	parameterType : 파라미터 클래스명
+	resultType : 반환값 클래스명
+	useGeneratedKeys : 실행 후 키 생성 여부
+	keyProperty : 키가 될 필드
+	keyColumn : 키를 저장할 컬럼
+	-->
+    <!-- 변수
+	#{param1}, #{변수명}
+	${param1}, ${변수명} : 작은따옴표 없이 삽입
 	-->
 </mapper>
 ```
@@ -887,3 +944,5 @@ http://www.mybatis.org/mybatis-3/ko/dynamic-sql.html
 파라미터를 작은따옴표를 제외하고 입력하려면 #이 아닌 $를 쓰면 된다.
 
 UPDATE teams SET ${param2} = #{param3} WHERE num = #{param1}
+
+
