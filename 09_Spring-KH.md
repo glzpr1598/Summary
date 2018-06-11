@@ -462,8 +462,8 @@ public interface SqlInterface {
 	parameterType : 파라미터 클래스명
 	resultType : 반환값 클래스명
 	useGeneratedKeys : 실행 후 키 생성 여부
+	keyColumn : 키를 저장할 컬럼	
 	keyProperty : 키가 될 필드
-	keyColumn : 키를 저장할 컬럼
 	-->
     <!-- 변수
 	#{param1}, #{변수명}
@@ -933,6 +933,19 @@ URL를 인자로 받을 수 있다.
 		
 		return map;  // JSON 형태로 변환하여 반환(@ResponseBody 때문)
 	}
+```
+
+
+
+# Session, Response
+
+컨트롤러의 인자로 Session과 Response를 바로 가져올 수 있다.
+
+```java
+@RequestMapping(value = "/home")
+public String home(HttpSession session, HttpServletResponse response) {
+    String root = session.getServletContext().getRealPath("/");
+}
 ```
 
 
