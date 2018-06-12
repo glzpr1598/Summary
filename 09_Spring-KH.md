@@ -4,7 +4,7 @@
 
 java-version : 1.8
 프로젝트 Properties - Project Facets - Java 버전 1.8
-springframwork-version : 4.3.14.RELEASE
+springframework-version : 4.3.14.RELEASE
 
 라이브러리 추가
 
@@ -143,6 +143,9 @@ springframwork-version : 4.3.14.RELEASE
 
 	<!-- 파일 서비스 설정 import -->
 	<beans:import resource="classpath:config/fileService.xml" />
+
+	<!-- Interceptor 설정 import -->
+	<beans:import resource="classpath:config/interceptor.xml" />
 ```
 
 
@@ -311,6 +314,33 @@ Namespaces : beans
 
 
 
+## resources/config/interceptor.xml
+
+Spring Bean Configuration File로 생성
+Namespaces : beans, mvc
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
+
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/요청URL" />
+			<mvc:mapping path="/list" />
+			<!-- ... -->
+			<bean class="패키지.Interceptor클래스명" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+</beans>
+```
+
+
+
 ## log4j.xml
 
 ```xml
@@ -470,6 +500,37 @@ public interface SqlInterface {
 	${param1}, ${변수명} : 작은따옴표 없이 삽입
 	-->
 </mapper>
+```
+
+
+
+## MyInterceptor.java
+
+```java
+public class MyInteceptor extends HandlerInterceptorAdapter {
+	
+	@Override
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws Exception {
+		/* 컨트롤러 요청 전에 실행 
+		 * 다른 페이지로 보내려면 response.sendRedirect("./index");
+		*/	
+		return true;
+	}
+
+	@Override
+	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+			ModelAndView modelAndView) throws Exception {
+		/* 컨트롤러 요청 후, View 처리 전 */
+	}
+
+	@Override
+	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+			throws Exception {
+		/* 컨트롤러, View 처리 후 */
+	}
+	
+}
 ```
 
 
@@ -957,5 +1018,79 @@ http://www.mybatis.org/mybatis-3/ko/dynamic-sql.html
 파라미터를 작은따옴표를 제외하고 입력하려면 #이 아닌 $를 쓰면 된다.
 
 UPDATE teams SET ${param2} = #{param3} WHERE num = #{param1}
+
+
+
+# Interceptor
+
+서블릿 단위에서 어떤 일을 시작하기 전이나 수행한 후에 추가적인 일을 할 때 사용
+
+![](img\spring03.png)
+
+## servlet-context.xml
+
+```xml
+	<!-- Interceptor 설정 import -->
+	<beans:import resource="classpath:config/interceptor.xml" />
+```
+
+
+
+## resources/config/interceptor.xml
+
+Spring Bean Configuration File로 생성
+Namespaces : beans, mvc
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
+
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/요청URL" />
+			<mvc:mapping path="/list" />
+			<!-- ... -->
+			<bean class="패키지.Interceptor클래스명" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+</beans>
+```
+
+
+
+## MyInterceptor.java
+
+```java
+public class MyInteceptor extends HandlerInterceptorAdapter {
+	
+	@Override
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws Exception {
+		/* 컨트롤러 요청 전에 실행 
+		 * 다른 페이지로 보내려면 response.sendRedirect("./index");
+		*/	
+		return true;
+	}
+
+	@Override
+	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+			ModelAndView modelAndView) throws Exception {
+		/* 컨트롤러 요청 후, View 처리 전 */
+	}
+
+	@Override
+	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+			throws Exception {
+		/* 컨트롤러, View 처리 후 */
+	}
+	
+}
+```
+
 
 
