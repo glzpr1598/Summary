@@ -478,7 +478,7 @@ public class LogAop {
 }
 ```
 
-3. XML 파일 설정
+3. 스프링 설정 파일 설정
 
 ```xml
 <!-- Namespaces에서 aop항목 체크 -->
@@ -543,7 +543,7 @@ public class LogAop {
 }
 ```
 
-3. XML 파일 설정
+3. 스프링 설정 파일 설정
 
 ```xml
 <!-- Namespaces에서 aop항목 체크 -->

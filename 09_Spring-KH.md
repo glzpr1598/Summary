@@ -1094,3 +1094,216 @@ public class MyInteceptor extends HandlerInterceptorAdapter {
 
 
 
+# AOP
+
+Aspect Oriented Programming : 관점 지향 프로그래밍
+
+핵심 기능과 공통 기능을 분리하여, 모듈성을 증가시킨 프로그래밍 방법
+
+- aspect : 공통 기능
+- advice : 언제 공통 기능을 수행할 지
+- joinpoint : advice를 적용할 대상(method)
+- pointcut : jointpoint의 부분, 실제로 advice가 적용된 부분
+- weaving : advice를 핵심 기능에 적용하는 행위
+
+## pom.xml
+
+```xml
+		<!-- AOP -->
+		<!-- AspectJ Weaver -->
+		<dependency>
+		    <groupId>org.aspectj</groupId>
+		    <artifactId>aspectjweaver</artifactId>
+		    <version>${org.aspectj-version}</version>
+		</dependency>
+		
+		<!-- Spring AOP -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-aop</artifactId>
+		    <version>${org.springframework-version}</version>
+		</dependency>
+```
+
+
+
+## servlet-context.xml
+
+```xml
+	<!-- AOP 설정 import -->
+	<beans:import resource="classpath:config/aop.xml" />
+```
+
+
+
+## resources/config/aop.xml
+
+스프링 설정 파일
+namespaces : aop
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+	<aop:aspectj-autoproxy />
+	<bean id="logAop" class="패키지.LogAop" />
+
+</beans>
+```
+
+
+
+## LogAop.java
+
+```java
+@Aspect
+public class LogAop {
+	
+    // 메서드 실행 전
+	@Before(value = "execution(* com.spring.service.AopService.before(..))")
+	public void logBefore(JoinPoint jp) {
+		// JoinPoint에는 실행 지점에 대한 정보가 있다.
+		System.out.println(jp.getSignature().getName() + " 실행 전");  // JoinPoint(대상 메서드)명
+		System.out.println("인자값 : " + Arrays.toString(jp.getArgs()));  // JoinPoint 인자값
+	}
+	
+    // 메서드 실행 후
+	@After(value = "execution(* com.spring.service.AopService.after(..))")
+	public void logAfter(JoinPoint jp) {
+		System.out.println(jp.getSignature().getName() + " 실행 후");
+	}
+	
+    // 메서드 예외 없이 실행 후, 반환값 받을 수 있음.
+	@AfterReturning(value = "execution(* com.spring.service.AopService.afterReturning(..))", 
+			returning = "result")
+	public void logAfterReturning(JoinPoint jp, Object result) {
+		System.out.println(jp.getSignature().getName() + " 실행 후");
+		System.out.println("반환값 : " + result);
+	}
+	
+    // 메서드 실행 중 예외 발생 시
+    @AfterThrowing(value = "execution(* com.spring.service.AopService.afterThrowing(..))",
+			throwing = "e")
+	public void logAfterThrowing(JoinPoint jp, Throwable e) {
+		System.out.println(jp.getSignature().getName() + " 실행 중 예외 발생 시");
+		System.out.println("예외 : " + e.getClass());
+	}
+	
+    // 메서드 실행 전/후
+	@Around(value = "execution(* com.spring.service.AopService.around(..))")
+	public void logAround(ProceedingJoinPoint pjp) throws Throwable {
+		System.out.println(pjp.getSignature().getName() + " 실행 전");
+		pjp.proceed();  // JoinPoint 실행
+		System.out.println(pjp.getSignature().getName() + " 실행 후");
+	}
+
+}
+```
+
+### AspectJ Pointcut 표현식
+
+```java
+// .. : 0개 이상
+
+// execution
+@Pointcut("execution(public void get*(..))")  // public void인 모든 get 메소드(파라미터 개수 상관 없음)
+@Pointcut("execution(* com.javalec.ex.*.*())")  // com.javalec.ex 패키지에 파라미터가 없는 메소드
+@Pointcut("execution(* com.javalec.ex..*.*())")  // com.javalec.ex와 하위 패키지에 파라미터가 없는 메소드
+@Pointcut("execution(* com.javalec.ex.Worker.*())")  // com.javalec.ex.Worker 클래스의 메소드
+
+// within
+@Pointcut("within(com.javalec.ex.*)")  // com.javalec.ex 패키지 안의 메소드
+@Pointcut("within(com.javalec.ex..*)")  // com.javalec.ex와 하위 패키지 안의 메소드
+@Pointcut("within(com.javalec.ex.Worker)")  // com.javalec.ex.Worker 클래스의 메소드
+
+// bean
+@Pointcut("bean(student)")  // student 빈
+@Pointcut("bean(*ker)")  // ker로 끝나는 빈
+```
+
+
+
+# Scheduler
+
+일정 시간마다 특정 작업을 수행할 때 사용
+
+## servlet-context.xml
+
+```xml
+	<!-- 스케줄러 설정 import -->
+	<beans:import resource="classpath:config/scheduler.xml" />
+```
+
+
+
+## 방법 1. java 파일로 제어(주로 사용)
+
+### resources/config/scheduler.xml
+
+스프링 설정 파일(beans, task)
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<task:annotation-driven/>
+
+</beans>
+```
+
+### Service.java
+
+```java
+@Service
+public class Service {
+
+	/* 표현식
+	 * fixedDelay = x : 이전에 호출된 task의 종료시간부터 x(ms) 후에 실행
+	 * fixedRate = x : 이전에 호출된 task의 시작시간부터 x(ms) 후에 실행
+	 * cron : 초 분 시 일 월 요일 연(생략가능)
+	 * "0/5 * * * * *" : 5초마다 실행
+	 * "0 0 12 * * *" : 매일 12시에 실행
+	 * http://www.baeldung.com/cron-expressions
+	 */
+	@Scheduled(표현식)
+	public void loop() {
+		System.out.println("loop 서비스 실행");
+	}
+	
+}
+```
+
+
+
+## 방법 2. XML 파일로 제어
+
+### resources/config/scheduler.xml
+
+스프링 설정 파일(beans, task)
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<task:annotation-driven/>
+    
+    <bean id="아이디" class="패키지.클래스" />
+	<task:scheduled-tasks>
+		<task:scheduled ref="아이디" method="실행할메서드"
+                        cron="0/1 * * * * *" />
+	</task:scheduled-tasks>
+
+</beans>
+```
