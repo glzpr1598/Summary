@@ -1,5 +1,7 @@
 # MVC 프로젝트 세팅
 
+interceptor까지 반영
+
 ## pom.xml
 
 java-version : 1.8
@@ -1307,3 +1309,74 @@ public class Service {
 
 </beans>
 ```
+
+
+# 암호화
+
+## pom.xml
+
+```xml
+		<!-- Spring Security Core -->
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-core</artifactId>
+		    <version>4.2.6.RELEASE</version>
+		</dependency>
+```
+
+
+
+## resources/config/spring-security.xml 
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />  
+
+</beans>
+```
+
+
+
+## @Autowired
+
+```java
+@Autowired
+BCryptPasswordEncoder passwordEncoder;
+```
+
+
+
+## 암호화
+
+```java
+String encodedPassword = passwordEncoder.encode(rawPassword);
+```
+
+
+
+## 비교
+
+```java
+passwordEncoder.matches(rawPassword, encodedPassword);  // boolean 반환
+```
+
+
+
+# Redirect에 데이터 담기
+
+Redirect를 이용할 때에도 Model처럼 객체를 담아서 보낼 수 있다.
+
+```java
+	@RequestMapping(value = "/")
+	public String home(RedirectAttributes redirectAttr) {
+		
+		redirectAttr.addFlashAttribute("msg", msg);
+		
+		return "redirect:/index";
+	}
+```
+
