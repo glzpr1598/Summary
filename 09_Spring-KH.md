@@ -161,11 +161,7 @@ Namespaces : beans
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:util="http://www.springframework.org/schema/util"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
-		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<!-- DB 접속 정보 설정 import -->
 	<import resource="classpath:config/dataSource.xml" />
@@ -284,14 +280,14 @@ Namespaces : beans, tf
 	</bean>
 	
 	<!-- @Transactional을 메소드에 사용하도록 -->
-	<tx:annotation-driven proxy-target-class="false"/>
+	<tx:annotation-driven proxy-target-class="false" />
 
 </beans>
 ```
 
 
 
-## resources/config/transaction.xml
+## resources/config/fileService.xml
 
 Spring Bean Configuration File로 생성
 Namespaces : beans
@@ -1322,6 +1318,15 @@ public class Service {
 		    <artifactId>spring-security-core</artifactId>
 		    <version>4.2.6.RELEASE</version>
 		</dependency>
+```
+
+
+
+## servlet-context.xml
+
+```xml
+	<!-- Spring Security 설정 import -->
+	<beans:import resource="classpath:config/spring-security.xml" />
 ```
 
 
