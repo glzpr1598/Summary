@@ -1380,3 +1380,16 @@ Redirect를 이용할 때에도 Model처럼 객체를 담아서 보낼 수 있�
 	}
 ```
 
+
+
+# DATE -> String 변환
+
+DB에는 DATE 형식, Spring의 DTO에는 String 형식으로 지정 후,
+
+```sql
+SELECT to_char(c.club_date, 'YYYY-MM-DD') as club_date
+    FROM club C
+    JOIN clubjoin cj
+    on C.club_id = cj.club_id;
+```
+
