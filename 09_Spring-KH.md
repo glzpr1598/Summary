@@ -963,8 +963,8 @@ URL를 인자로 받을 수 있다.
         url: "./login",
         type: "post",
         data: {
-            id: $("#id").val(),
-            pw: $("#pw").val()
+            "id": $("#id").val(),
+            "pw": $("#pw").val()
         },
         dataType: "json",
         success: function(data) {
@@ -1266,10 +1266,10 @@ public class Service {
 	/* 표현식
 	 * fixedDelay = x : 이전에 호출된 task의 종료시간부터 x(ms) 후에 실행
 	 * fixedRate = x : 이전에 호출된 task의 시작시간부터 x(ms) 후에 실행
-	 * cron : 초 분 시 일 월 요일 연(생략가능)
-	 * "0/5 * * * * *" : 5초마다 실행
-	 * "0 0 12 * * *" : 매일 12시에 실행
-	 * http://www.baeldung.com/cron-expressions
+	 * cron = "표현식" : 초 분 시 일 월 요일 연(생략가능)
+	 * 	"0/5 * * * * *" : 5초마다 실행
+	 * 	"0 0 12 * * *" : 매일 12시에 실행
+	 * 	http://www.baeldung.com/cron-expressions
 	 */
 	@Scheduled(표현식)
 	public void loop() {
@@ -1392,7 +1392,7 @@ Redirect를 이용할 때에도 Model처럼 객체를 담아서 보낼 수 있�
 DB에는 DATE 형식, Spring의 DTO에는 String 형식으로 지정 후,
 
 ```sql
-SELECT to_char(c.club_date, 'YYYY-MM-DD') as club_date
+SELECT TO_CHAR(c.club_date, 'YYYY-MM-DD') as club_date
     FROM club C
     JOIN clubjoin cj
     on C.club_id = cj.club_id;
