@@ -725,7 +725,7 @@ private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
 
-# @RequestParam
+# RequestParam
 
 @RequestParam("파라미터명") String 변수명 : 특정 파라미터를 받는다.
 @RequestParam HashMap<String, String> map : 모든 파라미터를 받는다.
@@ -817,7 +817,7 @@ Namespaces : beans, tf
 
 
 
-# Restful
+# Restful(Ajax)
 
 Java 객체를 JSON으로 변환(jackson)
 
@@ -882,6 +882,30 @@ Java 객체를 JSON으로 변환(jackson)
 	}
 ```
 
+#### javascript
+
+```javascript
+$("#btn").click(function() {
+    $.ajax({
+        url: "./login",
+        type: "post",
+        data: {
+            "id": $("#id").val(),
+            "pw": $("#pw").val()
+        },
+        dataType: "json",
+        success: function(data) {
+            if (data.success == true) {
+                alert("로그인 성공");
+            } else {
+                alert("로그인 실패");
+            }
+        },
+        error: function(err) {console.log(err);}
+    });
+});
+```
+
 
 
 ## 방법 2. @RestController 이용
@@ -938,7 +962,7 @@ public class AjaxController {
 
 
 
-# @PathVariable
+# PathVariable
 
 URL를 인자로 받을 수 있다.
 
@@ -1396,5 +1420,56 @@ SELECT to_char(c.club_date, 'YYYY-MM-DD') as club_date
     FROM club C
     JOIN clubjoin cj
     on C.club_id = cj.club_id;
+```
+
+
+
+# 쿠키(하루동안 열지 않기)
+
+## 부모창.jsp
+
+```javascript
+	// 쿠키 가져오기 함수
+	function getCookie(name){
+        var nameOfCookie = name + "=";
+        var x = 0;
+        while (x <= document.cookie.length){
+            var y = (x + nameOfCookie.length);
+            if (document.cookie.substring(x, y) == nameOfCookie){
+            if ((endOfCookie = document.cookie.indexOf(";", y)) == -1){
+            endOfCookie = document.cookie.length;
+            }
+            return unescape (document.cookie.substring(y, endOfCookie));
+            }
+            x = document.cookie.indexOf (" ", x) + 1;
+            if (x == 0) break;
+        }
+        return "";
+    }
+
+	// 쿠키가 없으면 새 창 열기
+	if(getCookie("쿠키이름") != "값") {
+		window.open(url, "_blank", option);
+	}
+```
+
+
+
+## 팝업창.jsp
+
+```javascript
+	// 쿠키 등록 함수
+	function setCookie(name, value, expiredays) {
+    	var todayDate = new Date();
+        todayDate.setDate (todayDate.getDate() + expiredays);
+        document.cookie = name + "=" + escape(value) + "; path=/; expires=" + todayDate.toGMTString() + ";";
+    }
+
+	// 하루동안 안보기 클릭
+	$("#notOpen").click(function() {
+		setCookie("쿠키이름", "값", 쿠키유지일);
+		// 창 닫기
+		window.close();
+	});
 ```
 
