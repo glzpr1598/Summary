@@ -297,8 +297,8 @@ $("#btn").click(function() {
         url: "./login",
         type: "post",
         data: {
-            id: $("#id").val(),
-            pw: $("#pw").val()
+            "id": $("#id").val(),
+            "pw": $("#pw").val()
         },
         dataType: "json",
         success: function(data) {
