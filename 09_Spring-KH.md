@@ -817,7 +817,7 @@ Namespaces : beans, tf
 
 
 
-# Restful(Ajax)
+# Restful
 
 Java 객체를 JSON으로 변환(jackson)
 
@@ -882,30 +882,6 @@ Java 객체를 JSON으로 변환(jackson)
 	}
 ```
 
-#### javascript
-
-```javascript
-$("#btn").click(function() {
-    $.ajax({
-        url: "./login",
-        type: "post",
-        data: {
-            "id": $("#id").val(),
-            "pw": $("#pw").val()
-        },
-        dataType: "json",
-        success: function(data) {
-            if (data.success == true) {
-                alert("로그인 성공");
-            } else {
-                alert("로그인 실패");
-            }
-        },
-        error: function(err) {console.log(err);}
-    });
-});
-```
-
 
 
 ## 방법 2. @RestController 이용
@@ -962,22 +938,6 @@ public class AjaxController {
 
 
 
-# PathVariable
-
-URL를 인자로 받을 수 있다.
-
-```java
-	@RequestMapping(value = "/test/{num1}/{num2}")
-	public String test(@PathVariable String num1, @PathVariable String num2) {
-        // 인자를 int형으로도 받을 수 있다.
-		logger.info(num1);
-		logger.info(num2);
-		return "home";
-	}
-```
-
-
-
 # Ajax
 
 ## JavaScript
@@ -1008,15 +968,30 @@ URL를 인자로 받을 수 있다.
 		String id = params.get("id");
 		String pw = params.get("pw");
 		
-		logger.info(id);
-		logger.info(pw);
-		
 		map.put("id", id);
 		map.put("pw", pw);
 		
 		return map;  // JSON 형태로 변환하여 반환(@ResponseBody 때문)
 	}
 ```
+
+
+
+# PathVariable
+
+URL를 인자로 받을 수 있다.
+
+```java
+	@RequestMapping(value = "/test/{num1}/{num2}")
+	public String test(@PathVariable String num1, @PathVariable String num2) {
+        // 인자를 int형으로도 받을 수 있다.
+		logger.info(num1);
+		logger.info(num2);
+		return "home";
+	}
+```
+
+
 
 
 
