@@ -1448,3 +1448,28 @@ SELECT TO_CHAR(c.club_date, 'YYYY-MM-DD') as club_date
 	});
 ```
 
+
+
+# 첨부파일
+
+## input file
+
+```jsp
+<form action="./upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" accept="image/*" />
+    <!-- accept=".gif, .jpg, .png" -->
+</form>
+```
+
+
+
+## 확장자 체크
+
+```javascript
+var ext = $('#file').val().split('.').pop().toLowerCase();
+// 이미지가 아닌 경우
+if($.inArray(ext, ['jpg','png','gif','bmp']) == -1) {
+    alert('이미지 파일(jpg, png, gif, bmp)만 선택 가능합니다.');
+}
+```
+
