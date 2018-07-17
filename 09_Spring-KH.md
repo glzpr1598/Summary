@@ -109,6 +109,8 @@ springframework-version : 4.3.14.RELEASE
 
 ## web.xml
 
+log4j.xml 파일을 src/main/resources/config 로 옮김
+
 ```xml
     <!-- 한글깨짐 방지 -->
     <filter>
@@ -127,6 +129,20 @@ springframework-version : 4.3.14.RELEASE
         <filter-name>encodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
+	<!-- 로그 설정파일 경로 지정 -->
+	<context-param>
+        <param-name>log4jConfigLocation</param-name>
+        <param-value>
+            classpath:config/log4j.xml
+        </param-value>
+    </context-param>
+    <!-- Log4j -->
+    <listener>
+        <listener-class>
+            org.springframework.web.util.Log4jConfigListener
+        </listener-class>
+    </listener>
 ```
 
 
@@ -342,9 +358,9 @@ Namespaces : beans, mvc
 ## log4j.xml
 
 ```xml
-	<!-- Application Loggers 마지막 패키지 지움 -->
-	<!-- <logger name="com.spring.controller"> -->
-	<logger name="com.spring">  
+
+	<!-- <logger name="com.spring.controller"> -->  <!-- 기존 -->
+	<logger name="com.spring.*">  <!-- 수정 -->
 		<level value="info" />
 	</logger>
 
@@ -664,6 +680,28 @@ JDBC에서 수행하는 내용을 log로 보여준다.
             <artifactId>log4jdbc-remix</artifactId>
             <version>0.2.7</version>
         </dependency>
+```
+
+
+
+## web.xml
+
+log4j.xml 파일을 src/main/resources/config 로 옮김
+
+```xml
+	<!-- 로그 설정파일 경로 지정 -->
+	<context-param>
+        <param-name>log4jConfigLocation</param-name>
+        <param-value>
+            classpath:config/log4j.xml
+        </param-value>
+    </context-param>
+    <!-- Log4j -->
+    <listener>
+        <listener-class>
+            org.springframework.web.util.Log4jConfigListener
+        </listener-class>
+    </listener>
 ```
 
 
