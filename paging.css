@@ -1,0 +1,43 @@
+@charset "UTF-8";
+
+#pagingArea {
+	text-align: center;
+}
+#pagingArea a {
+	box-sizing: border-box;
+	display: inline-block;
+    line-height: 24px;
+    width: 26px;
+    color: black;
+    font-size: 12px;
+    font-weight: bold;
+    font-family: tahoma;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+/* 숫자 마우스 올렸을 때 */
+#pagingArea .num:hover {
+	text-decoration: none;
+	color: orange;
+}
+/* 기호 */
+#pagingArea .icon {
+    height: 20px;
+    line-height: 18px;
+    width: 20px;
+    border: thin solid lightgray;
+}
+/* 다음 버튼 */
+#pagingArea .next {
+	margin-left: 10px;
+}
+/* 이전 버튼 */
+#pagingArea .prev {
+	margin-right: 10px;
+}
+/* 현재 페이지 */
+#pagingArea .currPage {  
+    color: orange;
+	border: thin solid lightgray;
+}
