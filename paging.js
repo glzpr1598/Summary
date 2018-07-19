@@ -19,13 +19,25 @@ func : 리스트를 출력하는 함수
 (function ( $ ) {
     $.paging = function(list, listCount, pageCount, func) {
 
-    	// 클릭 이벤트
-		$(document).on("click", "#pagingArea a", function() {
-			pagingPrint($(this).attr("id"));
-		});
+		// 해쉬 변경 이벤트
+		$(window).on("hashchange", function() {
+			var page = location.hash.substring(1);
+			// 해쉬가 없으면 1페이지로
+			if(page == "") {
+				page = 1;
+			}
+			pagingPrint(page);
+		})
     	
-		// 최초 1페이지 출력
-		pagingPrint(1);
+		// 최초 로드 시 해쉬 가져옴
+		var page = location.hash.substring(1);
+		// 해쉬가 없으면 1페이지로
+		if(page == "") {
+			page = 1;
+		}
+		
+		// 해당 페이지 출력
+		pagingPrint(page);
 		
     	// 페이징하여 출력하는 함수
     	function pagingPrint(page) {
@@ -82,7 +94,7 @@ func : 리스트를 출력하는 함수
     		var result = list.slice(startNum-1, endNum);
     		// 출력
     		func(result);
-    		
+
     		
     		/********************
     		 * 페이징 버튼 출력
@@ -92,31 +104,31 @@ func : 리스트를 출력하는 함수
     		
     		// 맨앞
     		if (startPage > 1) {
-    			$("#pagingArea").append("<a class='icon' id='1' href='#'>&nbsp;<i class='fas fa-angle-double-left'></i>&nbsp;</a>");
+    			$("#pagingArea").append("<a class='icon' href='#1'>&nbsp;<i class='fas fa-angle-double-left'></i>&nbsp;</a>");
     		}
     		
     		// 이전
     		if (startPage > 1) {
-    			$("#pagingArea").append("<a class='icon prev' id='"+prevPage+"' href='#'>&nbsp;<i class='fas fa-angle-left'></i>&nbsp;</a>");
+    			$("#pagingArea").append("<a class='icon prev' href='#"+prevPage+"'>&nbsp;<i class='fas fa-angle-left'></i>&nbsp;</a>");
     		}
     		
     		// 페이지 번호
     		for (var i = startPage; i <= endPage; i++) {
     			if (i == page) {  // 현재 페이지는 class='currPage' 부여
-    				$("#pagingArea").append("<a class='currPage num' id='"+i+"' href='#'>" + i + "</a>");
+    				$("#pagingArea").append("<a class='currPage num' href='#"+i+"'>" + i + "</a>");
     			} else {
-    				$("#pagingArea").append("<a class='num' id='"+i+"' href='#'>" + i + "</a>");
+    				$("#pagingArea").append("<a class='num' href='#"+i+"'>" + i + "</a>");
     			}
     		}
     		
     		// 다음
     		if (endPage != totalPage) {
-    			$("#pagingArea").append("<a class='icon next' id='"+nextPage+"' href='#'>&nbsp;<i class='fas fa-angle-right'></i>&nbsp;</a>");
+    			$("#pagingArea").append("<a class='icon next' href='#"+nextPage+"'>&nbsp;<i class='fas fa-angle-right'></i>&nbsp;</a>");
     		}
     		
     		// 맨뒤
     		if (endPage != totalPage) {
-    			$("#pagingArea").append("<a class='icon' id='"+totalPage+"' href='#'>&nbsp;<i class='fas fa-angle-double-right'></i>&nbsp;</a>");
+    			$("#pagingArea").append("<a class='icon' href='#"+totalPage+"'>&nbsp;<i class='fas fa-angle-double-right'></i>&nbsp;</a>");
     		}
     	};
     };
