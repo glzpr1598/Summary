@@ -180,6 +180,16 @@ background-size: auto | cover | contain | 100px 100px;
 background: red url("img.png") 0px 0px;
 ```
 
+### 이미지 크기에 맞게 자르기
+
+```css
+img {
+    object-fit: cover;
+    width: 200px;
+    height: 200px;
+}
+```
+
 ### 위치(포지션)
 
 ```css
