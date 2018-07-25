@@ -190,6 +190,8 @@ img {
 }
 ```
 
+IE는 지원하지 않음.
+
 ### 위치(포지션)
 
 ```css
@@ -237,6 +239,14 @@ column-rule-style: solid; /* 구분선 */
 column-rule-width: 5px;
 column-rule-color: red;
 column-span: all; /* 컬럼을 무시 */
+```
+
+
+
+### 영어 줄바꿈
+
+```css
+word-break: break-all;
 ```
 
 

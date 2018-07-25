@@ -1344,6 +1344,7 @@ public class Service {
 ```
 
 
+
 # 암호화
 
 ## pom.xml
@@ -1509,5 +1510,37 @@ var ext = $('#file').val().split('.').pop().toLowerCase();
 if($.inArray(ext, ['jpg','png','gif','bmp']) == -1) {
     alert('이미지 파일(jpg, png, gif, bmp)만 선택 가능합니다.');
 }
+```
+
+
+
+# 검색 기능
+
+검색어를 통해 검색 시, 띄어쓰기를 기준으로 단어를 나누어서 모든 단어를 포함하는 결과 출력.
+
+단어를 나누어서 ArrayList에 담은 뒤,
+
+```sql
+<select id="메서드명" resultType="결과타입" >
+	SELECT 컬럼명, ... 
+    FROM 테이블명
+    WHERE 
+	<foreach collection="list" item="item" open="(" close=")" separator=") AND (">
+		검색할컬럼1 LIKE '%'||#{item}||'%' 
+		OR 검색할컬럼2 LIKE '%'||#{item}||'%' 
+		...
+	</foreach>
+</select>
+```
+
+
+
+# 컨트롤러에서 자바스크립트
+
+```java
+response.setContentType("text/html; charset=UTF-8");
+PrintWriter out = response.getWriter();
+out.println("<script>alert('로그인이 필요합니다.'); lsocation.href='./loginForm';</script>");
+out.flush();
 ```
 
