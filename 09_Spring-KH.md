@@ -1514,6 +1514,45 @@ if($.inArray(ext, ['jpg','png','gif','bmp']) == -1) {
 
 
 
+## 컨트롤러(서비스)
+
+```java
+public void clubPictureUpload(MultipartFile file, HttpSession session) {
+    inter = sqlSession.getMapper(Inter.class);
+    
+    // 저장할 디렉토리 지정
+    String dirPath = session.getServletContext().getRealPath("/");
+    dirPath += "저장할디렉토리";  // ex) resources/club-picture/
+
+    // 디렉토리  생성
+    File dir = new File(dirPath);
+    if(!dir.exists()) {
+        dir.mkdirs();
+    }
+
+    // 원본 파일명 가져오기
+    String oldName = file.getOriginalFilename();
+
+    // 새로운 파일명(현재시간+원본확장자)
+    String newName = System.currentTimeMillis() + 
+        oldName.substring(oldName.lastIndexOf('.'));
+
+    try {
+        // 파일 생성
+        byte[] bytes = file.getBytes();  // 파일 bytes
+        Path filePath = Paths.get(dirPath + newName);  // 실제 파일 경로
+        Files.write(filePath, bytes);  // 파일 생성
+
+        // DB에 파일이름 저장
+        inter.clubPictureUpload(oldName, newName);
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+```
+
+
+
 # 검색 기능
 
 검색어를 통해 검색 시, 띄어쓰기를 기준으로 단어를 나누어서 모든 단어를 포함하는 결과 출력.
@@ -1540,7 +1579,7 @@ if($.inArray(ext, ['jpg','png','gif','bmp']) == -1) {
 ```java
 response.setContentType("text/html; charset=UTF-8");
 PrintWriter out = response.getWriter();
-out.println("<script>alert('로그인이 필요합니다.'); lsocation.href='./loginForm';</script>");
+out.println("<script>alert('로그인이 필요합니다.'); location.href='./loginForm';</script>");
 out.flush();
 ```
 
